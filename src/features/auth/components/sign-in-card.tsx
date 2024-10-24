@@ -1,6 +1,4 @@
 import React from "react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,17 +13,20 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import {SocialAuth} from "@/features/auth/components/social-auth";
 
 const passwordMinLength = 8;
 const passwordMaxLength = 256;
 
-const formSchema = z.object({
+export const signInFormShape = {
   email: z.string().email(),
   password: z
     .string()
     .min(passwordMinLength, `Minimum ${passwordMinLength} characters`)
     .max(passwordMaxLength, `Maximum ${passwordMaxLength} characters`),
-});
+};
+
+const formSchema = z.object(signInFormShape);
 
 export const SignInCard: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -92,26 +93,7 @@ export const SignInCard: React.FC = () => {
       <div className="px-7">
         <DottedSeparator />
       </div>
-      <CardContent className="p-7 flex flex-col gap-y-4">
-        <Button
-          disabled={false}
-          variant="secondary"
-          size="lg"
-          className="w-full"
-        >
-          <FcGoogle className="mr-2 size-5" />
-          Login with Google
-        </Button>
-        <Button
-          disabled={false}
-          variant="secondary"
-          size="lg"
-          className="w-full"
-        >
-          <FaGithub className="mr-2 size-5" />
-          Login with Github
-        </Button>
-      </CardContent>
+      <SocialAuth />
     </Card>
   );
 };
