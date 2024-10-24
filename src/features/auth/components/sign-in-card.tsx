@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +14,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {SocialAuth} from "@/features/auth/components/social-auth";
+import { SocialAuth } from "@/features/auth/components/social-auth";
+import {routes} from "@/features/routes";
 
 const passwordMinLength = 8;
 const passwordMaxLength = 256;
@@ -94,6 +96,15 @@ export const SignInCard: React.FC = () => {
         <DottedSeparator />
       </div>
       <SocialAuth />
+      <div className="px-7">
+        <DottedSeparator/>
+      </div>
+      <CardContent className="p-7 flex items-center justify-center">
+        <p className="pr-1">Don&apos;t have an account?</p>
+        <Link href={routes.auth.signUp}>
+          <span className="text-blue-700">Sign Up</span>
+        </Link>
+      </CardContent>
     </Card>
   );
 };

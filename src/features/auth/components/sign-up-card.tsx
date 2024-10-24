@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { SocialAuth } from "@/features/auth/components/social-auth";
 import { signInFormShape } from "@/features/auth/components/sign-in-card";
+import {routes} from "@/features/routes";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -59,7 +60,7 @@ export const SignUpCard: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <div className="px-7 mb-2">
-        <DottedSeparator />
+        <DottedSeparator/>
       </div>
       <CardContent className="p-7">
         <Form {...form}>
@@ -67,7 +68,7 @@ export const SignUpCard: React.FC = () => {
             <FormField
               name="name"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem>
                   <FormControl>
                     <Input
@@ -77,14 +78,14 @@ export const SignUpCard: React.FC = () => {
                       placeholder="Enter your name"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
             <FormField
               name="email"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem>
                   <FormControl>
                     <Input
@@ -93,14 +94,14 @@ export const SignUpCard: React.FC = () => {
                       placeholder="Enter email address"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
             <FormField
               name="password"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem>
                   <FormControl>
                     <Input
@@ -109,7 +110,7 @@ export const SignUpCard: React.FC = () => {
                       placeholder="Enter password"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -120,9 +121,18 @@ export const SignUpCard: React.FC = () => {
         </Form>
       </CardContent>
       <div className="px-7">
-        <DottedSeparator />
+        <DottedSeparator/>
       </div>
-      <SocialAuth />
+      <SocialAuth/>
+      <div className="px-7">
+        <DottedSeparator/>
+      </div>
+      <CardContent className="p-7 flex items-center justify-center">
+        <p className="pr-1">Already have an account?</p>
+        <Link href={routes.auth.signIn}>
+          <span className="text-blue-700">Login</span>
+        </Link>
+      </CardContent>
     </Card>
   );
 };
