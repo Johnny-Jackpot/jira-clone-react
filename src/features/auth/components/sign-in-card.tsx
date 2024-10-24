@@ -19,6 +19,7 @@ export const SignInCard: React.FC = () => {
         <form className="space-y-4">
           <Input
             required
+            name="email"
             type="email"
             value={""}
             onChange={() => {}}
@@ -27,6 +28,7 @@ export const SignInCard: React.FC = () => {
           />
           <Input
             required
+            name="password"
             type="password"
             value={""}
             onChange={() => {}}

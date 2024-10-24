@@ -37,6 +37,16 @@ export const SignUpCard: React.FC = () => {
         <form className="space-y-4">
           <Input
             required
+            name="name"
+            type="text"
+            value={""}
+            onChange={() => {}}
+            placeholder="Enter your name"
+            disabled={false}
+          />
+          <Input
+            required
+            name="email"
             type="email"
             value={""}
             onChange={() => {}}
@@ -45,6 +55,7 @@ export const SignUpCard: React.FC = () => {
           />
           <Input
             required
+            name="password"
             type="password"
             value={""}
             onChange={() => {}}
