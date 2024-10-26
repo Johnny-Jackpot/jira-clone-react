@@ -28,7 +28,7 @@
     "date-fns": "^4.1.0",
     "hono": "^4.6.7",
     "lucide-react": "^0.453.0",
-    "next": "14.2.14",
+    "next": "15.0.1",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-day-picker": "8.10.1",
