@@ -21,10 +21,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SocialAuth } from "@/features/auth/components/social-auth";
-import {routes} from "@/features/routes";
-import {registerSchema} from "@/features/auth/schemas";
+import { routes } from "@/features/routes";
+import { registerSchema } from "@/features/auth/schemas";
+import { useRegister } from "@/features/auth/api/use-register";
 
 export const SignUpCard: React.FC = () => {
+  const { mutate } = useRegister();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -35,7 +38,7 @@ export const SignUpCard: React.FC = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    console.log(values);
+    mutate({ json: values });
   };
 
   return (
@@ -55,7 +58,7 @@ export const SignUpCard: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <div className="px-7 mb-2">
-        <DottedSeparator/>
+        <DottedSeparator />
       </div>
       <CardContent className="p-7">
         <Form {...form}>
@@ -63,24 +66,23 @@ export const SignUpCard: React.FC = () => {
             <FormField
               name="name"
               control={form.control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
                       {...field}
                       type="text"
-                      value={""}
                       placeholder="Enter your name"
                     />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               name="email"
               control={form.control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
@@ -89,14 +91,14 @@ export const SignUpCard: React.FC = () => {
                       placeholder="Enter email address"
                     />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               name="password"
               control={form.control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
@@ -105,22 +107,22 @@ export const SignUpCard: React.FC = () => {
                       placeholder="Enter password"
                     />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <Button disabled={false} size="lg" className="w-full">
-              Login
+              Sign Up
             </Button>
           </form>
         </Form>
       </CardContent>
       <div className="px-7">
-        <DottedSeparator/>
+        <DottedSeparator />
       </div>
-      <SocialAuth/>
+      <SocialAuth />
       <div className="px-7">
-        <DottedSeparator/>
+        <DottedSeparator />
       </div>
       <CardContent className="p-7 flex items-center justify-center">
         <p className="pr-1">Already have an account?</p>

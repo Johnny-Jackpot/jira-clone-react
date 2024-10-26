@@ -15,10 +15,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SocialAuth } from "@/features/auth/components/social-auth";
-import {routes} from "@/features/routes";
-import {loginSchema} from "@/features/auth/schemas";
+import { routes } from "@/features/routes";
+import { loginSchema } from "@/features/auth/schemas";
+import { useLogin } from "@/features/auth/api/use-login";
 
 export const SignInCard: React.FC = () => {
+  const { mutate } = useLogin();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -28,7 +31,7 @@ export const SignInCard: React.FC = () => {
   });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    console.log(values);
+    mutate({ json: values });
   };
 
   return (
@@ -85,7 +88,7 @@ export const SignInCard: React.FC = () => {
       </div>
       <SocialAuth />
       <div className="px-7">
-        <DottedSeparator/>
+        <DottedSeparator />
       </div>
       <CardContent className="p-7 flex items-center justify-center">
         <p className="pr-1">Don&apos;t have an account?</p>
