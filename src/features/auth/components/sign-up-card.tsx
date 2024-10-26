@@ -21,17 +21,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SocialAuth } from "@/features/auth/components/social-auth";
-import { signInFormShape } from "@/features/auth/components/sign-in-card";
 import {routes} from "@/features/routes";
-
-const formSchema = z.object({
-  name: z.string().trim().min(1, "Required"),
-  ...signInFormShape,
-});
+import {registerSchema} from "@/features/auth/schemas";
 
 export const SignUpCard: React.FC = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -39,7 +34,7 @@ export const SignUpCard: React.FC = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof registerSchema>) => {
     console.log(values);
   };
 

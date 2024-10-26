@@ -16,30 +16,18 @@ import {
 } from "@/components/ui/form";
 import { SocialAuth } from "@/features/auth/components/social-auth";
 import {routes} from "@/features/routes";
-
-const passwordMinLength = 8;
-const passwordMaxLength = 256;
-
-export const signInFormShape = {
-  email: z.string().email(),
-  password: z
-    .string()
-    .min(passwordMinLength, `Minimum ${passwordMinLength} characters`)
-    .max(passwordMaxLength, `Maximum ${passwordMaxLength} characters`),
-};
-
-const formSchema = z.object(signInFormShape);
+import {loginSchema} from "@/features/auth/schemas";
 
 export const SignInCard: React.FC = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof loginSchema>) => {
     console.log(values);
   };
 
