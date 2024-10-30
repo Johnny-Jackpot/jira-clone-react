@@ -2,15 +2,16 @@ import "server-only";
 
 import { Client, Account, Storage, Users, Databases } from "node-appwrite";
 
-export async function createAdminClient() {
-  const client = new Client()
+export function getClient(): Client {
+  return new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT)
-    .setKey(process.env.NEXT_APPWRITE_KEY);
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
+}
 
+export async function createAdminClient() {
   return {
     get account() {
-      return new Account(client);
+      return new Account(getClient().setKey(process.env.NEXT_APPWRITE_KEY));
     },
   };
 }
