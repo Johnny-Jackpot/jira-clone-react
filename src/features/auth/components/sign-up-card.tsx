@@ -28,7 +28,7 @@ import { registerSchema } from "@/features/auth/schemas";
 import { useRegister } from "@/features/auth/api/use-register";
 
 export const SignUpCard: React.FC = () => {
-  const { mutate } = useRegister();
+  const { mutate, isPending } = useRegister();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -113,8 +113,8 @@ export const SignUpCard: React.FC = () => {
                 </FormItem>
               )}
             />
-            <Button disabled={false} size="lg" className="w-full">
-              Sign Up
+            <Button disabled={isPending} size="lg" className="w-full">
+              Register
             </Button>
           </form>
         </Form>
@@ -122,7 +122,7 @@ export const SignUpCard: React.FC = () => {
       <div className="px-7">
         <DottedSeparator />
       </div>
-      <SocialAuth />
+      <SocialAuth disabled={isPending} />
       <div className="px-7">
         <DottedSeparator />
       </div>
