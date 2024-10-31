@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { useLogout } from "@/features/auth/api/use-logout";
-import { useCurrent } from "@/features/auth/api/use-current";
+import { useCurrentUser } from "@/features/auth/api/use-current-user";
 
 export const UserButton: React.FC = () => {
-  const { data: user, isLoading } = useCurrent();
+  const { data: user, isLoading } = useCurrentUser();
   const { mutate: logout } = useLogout();
 
   if (isLoading) {
