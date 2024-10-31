@@ -14,7 +14,7 @@ import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 
 import { AUTH_COOKIE } from "@/features/auth/constants";
-import { getClient } from "@/lib/appwrite";
+import { getAppWriteClient } from "@/lib/appwrite";
 
 type AdditionalContext = {
   Variables: {
@@ -32,7 +32,7 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(async (c, n
     return c.json({ error: "Unauthorized" }, 401);
   }
 
-  const client = getClient().setSession(sessionId);
+  const client = getAppWriteClient().setSession(sessionId);
 
   const account = new Account(client);
   const databases = new Databases(client);

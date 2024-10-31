@@ -1,8 +1,8 @@
 import "server-only";
 
-import { Client, Account, Storage, Users, Databases } from "node-appwrite";
+import { Client, Account } from "node-appwrite";
 
-export function getClient(): Client {
+export function getAppWriteClient(): Client {
   return new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
@@ -11,7 +11,9 @@ export function getClient(): Client {
 export async function createAdminClient() {
   return {
     get account() {
-      return new Account(getClient().setKey(process.env.NEXT_APPWRITE_KEY));
+      return new Account(
+        getAppWriteClient().setKey(process.env.NEXT_APPWRITE_KEY),
+      );
     },
   };
 }
