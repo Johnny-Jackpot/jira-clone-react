@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/features/auth/actions";
 import { redirect } from "next/navigation";
 import { routes } from "@/features/routes";
+import {CreateWorkspaceForm} from "@/features/workspaces/components/create-workspace-form";
 
 export default async function Home() {
   const user = await getCurrentUser();
@@ -8,5 +9,7 @@ export default async function Home() {
     redirect(routes.auth.signIn);
   }
 
-  return <div>This is a home page</div>;
+  return <div>
+    <CreateWorkspaceForm />
+  </div>;
 }

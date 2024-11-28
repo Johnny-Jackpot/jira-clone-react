@@ -1,18 +1,26 @@
 import { useMutation } from "@tanstack/react-query";
 import { InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
-import { useOnSuccess } from "@/features/auth/api/use-on-success";
+import { useOnQueryExecuted } from "@/features/auth/api/use-on-query-executed";
 
 type ResponseType = InferResponseType<(typeof client.api.auth.logout)["$post"]>;
 
 export const useLogout = () => {
-  const onSuccess = useOnSuccess();
+  const { onSuccess, onError } = useOnQueryExecuted(
+    "Logged out",
+    "Failed to log out",
+  );
 
   return useMutation<ResponseType, Error>({
     mutationFn: async () => {
       const response = await client.api.auth.logout["$post"]();
+      if (!response.ok) {
+        throw new Error("Failed to log out");
+      }
+
       return await response.json();
     },
     onSuccess,
+    onError,
   });
 };
