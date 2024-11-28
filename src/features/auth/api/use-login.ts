@@ -7,10 +7,10 @@ type ResponseType = InferResponseType<(typeof client.api.auth.login)["$post"]>;
 type RequestType = InferRequestType<(typeof client.api.auth.login)["$post"]>;
 
 export const useLogin = () => {
-  const { onSuccess, onError } = useOnQueryExecuted(
-    "Logged in",
-    "Failed to log in",
-  );
+  const { onSuccess, onError } = useOnQueryExecuted({
+    successMsg: "Logged in",
+    errorMsg: "Failed to log in",
+  });
 
   return useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json }) => {

@@ -6,10 +6,10 @@ import { useOnQueryExecuted } from "@/features/auth/api/use-on-query-executed";
 type ResponseType = InferResponseType<(typeof client.api.auth.logout)["$post"]>;
 
 export const useLogout = () => {
-  const { onSuccess, onError } = useOnQueryExecuted(
-    "Logged out",
-    "Failed to log out",
-  );
+  const { onSuccess, onError } = useOnQueryExecuted({
+    successMsg: "Logged out",
+    errorMsg: "Failed to log out",
+  });
 
   return useMutation<ResponseType, Error>({
     mutationFn: async () => {

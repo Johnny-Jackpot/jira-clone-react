@@ -9,10 +9,10 @@ type ResponseType = InferResponseType<
 type RequestType = InferRequestType<(typeof client.api.auth.register)["$post"]>;
 
 export const useRegister = () => {
-  const { onSuccess, onError } = useOnQueryExecuted(
-    "Registered",
-    "Failed to register",
-  );
+  const { onSuccess, onError } = useOnQueryExecuted({
+    successMsg: "Registered",
+    errorMsg: "Failed to register",
+  });
 
   return useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json }) => {
