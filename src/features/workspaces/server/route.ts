@@ -13,9 +13,9 @@ import { DATABASE_ID, IMAGES_BUCKET_ID, WORKSPACES_ID } from "@/config";
 const app = new Hono().post(
   "/",
   sessionMiddleware,
-  zValidator("json", createWorkspaceSchema),
+  zValidator("form", createWorkspaceSchema),
   async (c) => {
-    const { name, image } = c.req.valid("json");
+    const { name, image } = c.req.valid("form");
 
     const user = c.get("user");
     const databases: DatabasesType = c.get("databases");
@@ -32,7 +32,7 @@ const app = new Hono().post(
       );
       const arrayBuffer = await storage.getFilePreview(
         IMAGES_BUCKET_ID,
-        file.$id,
+        storedImage.$id,
       );
 
       imagePreview = `data:image/png;base64${Buffer.from(arrayBuffer).toString("base64")}`;

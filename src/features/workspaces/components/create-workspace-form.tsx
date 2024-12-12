@@ -41,7 +41,12 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
   });
 
   const onSubmit = (values: FormValues) => {
-    mutate({ json: values });
+    const finalValues = {
+      ...values,
+      image: values.image instanceof File ? values.image : "",
+    }
+
+    mutate({ form: finalValues });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
