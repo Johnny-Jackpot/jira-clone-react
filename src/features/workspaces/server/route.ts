@@ -8,8 +8,7 @@ import {
 import { zValidator } from "@hono/zod-validator";
 import { createWorkspaceSchema } from "@/features/workspaces/schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { DATABASE_ID, WORKSPACES_ID } from "@/config";
-import { WorkspaceService } from "@/features/workspaces/server/workspace-service";
+import { DATABASE_ID, IMAGES_BUCKET_ID, WORKSPACES_ID } from "@/config";
 
 const app = new Hono().post(
   "/",
@@ -20,6 +19,24 @@ const app = new Hono().post(
 
     const user = c.get("user");
     const databases: DatabasesType = c.get("databases");
+    const storage: StorageType = c.get("storage");
+
+    let storedImage: Models.File | undefined;
+    let imagePreview: string | undefined;
+
+    if (image instanceof File) {
+      storedImage = await storage.createFile(
+        IMAGES_BUCKET_ID,
+        ID.unique(),
+        image,
+      );
+      const arrayBuffer = await storage.getFilePreview(
+        IMAGES_BUCKET_ID,
+        file.$id,
+      );
+
+      imagePreview = `data:image/png;base64${Buffer.from(arrayBuffer).toString("base64")}`;
+    }
 
     const workspace = await databases.createDocument(
       DATABASE_ID,
@@ -28,18 +45,12 @@ const app = new Hono().post(
       {
         name,
         userId: user.$id,
+        imageId: storedImage?.$id,
+        imagePreview,
       },
     );
 
-    let updatedWorkspace: Models.Document | undefined;
-
-    if (image instanceof File) {
-      const storage: StorageType = c.get("storage");
-      const workspaceService = new WorkspaceService(storage, databases);
-      updatedWorkspace = await workspaceService.uploadImage(image, workspace);
-    }
-
-    return c.json({ data: updatedWorkspace ? updatedWorkspace : workspace });
+    return c.json({ data: workspace });
   },
 );
 
