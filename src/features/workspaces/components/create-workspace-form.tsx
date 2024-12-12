@@ -44,6 +44,13 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
     mutate({ json: values });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("image", file);
+    }
+  };
+
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
@@ -108,7 +115,18 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
                           accept=".jpg, .png, .jpeg, .svg"
                           ref={inputRef}
                           disabled={isPending}
+                          onChange={handleImageChange}
                         />
+                        <Button
+                          type="button"
+                          disabled={isPending}
+                          variant="teritary"
+                          size="xs"
+                          className="w-fit mt-2"
+                          onClick={() => inputRef.current?.click()}
+                        >
+                          Upload Image
+                        </Button>
                       </div>
                     </div>
                   </div>
