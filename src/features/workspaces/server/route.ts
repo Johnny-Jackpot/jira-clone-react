@@ -4,6 +4,7 @@ import {
   type Databases as DatabasesType,
   type Storage as StorageType,
   Models,
+  Query,
 } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
 import { createWorkspaceSchema } from "@/features/workspaces/schemas";
@@ -18,11 +19,25 @@ import { MemberRole } from "@/features/members/types";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
+    const user = c.get("user");
     const databases: DatabasesType = c.get("databases");
+
+    const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
+      Query.equal("userId", user.$id),
+    ]);
+
+    if (members.total === 0) {
+      return c.json({ data: { documents: [], total: 0 } });
+    }
+
+    const workspaceIds: string[] = members.documents.map(
+      (member) => member.workspaceId,
+    );
 
     const workspaces = await databases.listDocuments(
       DATABASE_ID,
       WORKSPACES_ID,
+      [Query.orderDesc("$createdAt"), Query.contains("$id", workspaceIds)],
     );
 
     return c.json({ data: workspaces });
