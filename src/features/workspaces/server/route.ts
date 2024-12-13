@@ -46,7 +46,7 @@ const app = new Hono()
           storedImage.$id,
         );
 
-        imagePreview = `data:image/png;base64${Buffer.from(arrayBuffer).toString("base64")}`;
+        imagePreview = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
       }
 
       const workspace = await databases.createDocument(
