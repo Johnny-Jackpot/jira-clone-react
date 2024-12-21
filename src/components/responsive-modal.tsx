@@ -5,14 +5,14 @@ import { Drawer, DrawerContent } from "@/components/ui/drawer";
 
 type ResponsiveModalProps = {
   children: React.ReactNode;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export const ResponsiveModal: React.FC<ResponsiveModalProps> = ({
   children,
-  open,
-  onOpenChange,
+  open = true,
+  onOpenChange = () => {},
 }) => {
   const isDesktop = useMedia("(min-width: 1024px)", true);
 
