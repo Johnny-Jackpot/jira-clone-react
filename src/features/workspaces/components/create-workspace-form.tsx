@@ -6,6 +6,7 @@ import { z } from "zod";
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { createWorkspaceSchema } from "@/features/workspaces/schemas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -31,6 +32,8 @@ type FormValues = z.infer<typeof createWorkspaceSchema>;
 export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
   onCancel,
 }) => {
+  const router = useRouter();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const { mutate, isPending } = useCreateWorkspace();
   const form = useForm<FormValues>({
@@ -49,8 +52,9 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
     mutate(
       { form: finalValues },
       {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
           form.reset();
+          router.push(`/workspaces/${data.$id}`);
         },
       },
     );
