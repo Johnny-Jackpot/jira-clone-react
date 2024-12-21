@@ -6,11 +6,11 @@ import { CreateWorkspaceForm } from "@/features/workspaces/components/create-wor
 import { useCreateWorkspaceModal } from "@/features/workspaces/hooks/use-create-workspace-modal";
 
 export const CreateWorkspaceModal: React.FC = () => {
-  const { isOpen, setIsOpen } = useCreateWorkspaceModal();
+  const { isOpen, setIsOpen, close } = useCreateWorkspaceModal();
 
   return (
     <ResponsiveModal open={isOpen} onOpenChange={setIsOpen}>
-      <CreateWorkspaceForm />
+      <CreateWorkspaceForm onCancel={close} />
     </ResponsiveModal>
   );
 };
