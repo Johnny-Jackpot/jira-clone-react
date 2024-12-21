@@ -1,8 +1,8 @@
 import React from "react";
 import { useMedia } from "react-use";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 type ResponsiveModalProps = {
   children: React.ReactNode;
