@@ -1,15 +1,29 @@
-import { redirectToLoginIfNoUser } from "@/features/auth/actions";
 import React from "react";
+import { redirect } from "next/navigation";
+import { WorkspaceForm } from "@/features/workspaces/components/workspace-form";
+import { getWorkspace } from "@/features/workspaces/actions";
+import { redirectToLoginIfNoUser } from "@/features/auth/actions";
 
 const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
   params,
 }) => {
   await redirectToLoginIfNoUser();
   const { workspaceId } = await params;
+  const urlToRedirect = `/workspaces/${workspaceId}`;
+
+  const workspace = await getWorkspace(workspaceId);
+  if (!workspace) {
+    redirect(urlToRedirect);
+  }
 
   return (
     <div>
-      <h1>WorkspaceIdSettings {workspaceId}</h1>
+      <WorkspaceForm
+        initialValues={workspace}
+        onCancel={() => {
+          redirect(urlToRedirect);
+        }}
+      />
     </div>
   );
 };

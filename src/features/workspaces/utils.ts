@@ -1,5 +1,6 @@
 import { type Databases as DatabasesType, Query } from "node-appwrite";
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
+import { Workspace } from "@/features/workspaces/types";
 
 export const workspacesUtils = {
   async getWorkspaces(userId: string, databases: DatabasesType) {
@@ -21,12 +22,10 @@ export const workspacesUtils = {
     ]);
   },
   async getWorkspace(workspaceId: string, databases: DatabasesType) {
-    const workspaces = await databases.listDocuments(
+    return await databases.getDocument<Workspace>(
       DATABASE_ID,
       WORKSPACES_ID,
-      [Query.contains("$id", workspaceId)],
+      workspaceId,
     );
-
-    return workspaces.documents[0];
   },
 };
