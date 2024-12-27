@@ -20,4 +20,13 @@ export const workspacesUtils = {
       Query.contains("$id", workspaceIds),
     ]);
   },
+  async getWorkspace(workspaceId: string, databases: DatabasesType) {
+    const workspaces = await databases.listDocuments(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      [Query.contains("$id", workspaceId)],
+    );
+
+    return workspaces.documents[0];
+  },
 };

@@ -3,7 +3,6 @@ import {
   ID,
   type Databases as DatabasesType,
   type Storage as StorageType,
-  Models,
 } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
 import {
@@ -13,7 +12,6 @@ import {
 import { sessionMiddleware } from "@/lib/session-middleware";
 import {
   DATABASE_ID,
-  IMAGES_BUCKET_ID,
   MEMBERS_ID,
   WORKSPACES_ID,
 } from "@/config";
@@ -21,7 +19,7 @@ import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { workspacesUtils } from "@/features/workspaces/utils";
 import { getMember } from "@/features/members/utils";
-import { storeImage } from "@/features/storage/images/utils";
+import { imagesUtils } from "@/features/storage/images/utils";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -45,7 +43,7 @@ const app = new Hono()
       const databases: DatabasesType = c.get("databases");
       const storage: StorageType = c.get("storage");
 
-      const { storedImage, imagePreview } = await storeImage({
+      const { storedImage, imagePreview } = await imagesUtils.storeImage({
         storage,
         image,
       });
@@ -94,10 +92,13 @@ const app = new Hono()
         return c.status(403).json({ error: "Forbidden" });
       }
 
-      const { storedImage, imagePreview } = await storeImage({
+      const { storedImage, imagePreview } = await imagesUtils.storeImage ({
         storage,
         image,
       });
+
+      const workspace = await workspacesUtils.getWorkspace(workspaceId, databases);
+
 
     },
   );
