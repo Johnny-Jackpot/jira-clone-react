@@ -1,6 +1,6 @@
-import { redirectToLoginIfNoUser } from "@/features/auth/actions";
+import { redirectToLoginIfNoUser } from "@/features/auth/queries";
 import { redirect } from "next/navigation";
-import { getWorkspaces } from "@/features/workspaces/actions";
+import { getWorkspaces } from "@/features/workspaces/queries";
 
 export default async function Home() {
   await redirectToLoginIfNoUser();

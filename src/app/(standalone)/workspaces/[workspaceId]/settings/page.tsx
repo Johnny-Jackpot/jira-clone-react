@@ -1,8 +1,8 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { WorkspaceForm } from "@/features/workspaces/components/workspace-form";
-import { getWorkspace } from "@/features/workspaces/actions";
-import { redirectToLoginIfNoUser } from "@/features/auth/actions";
+import { getWorkspace } from "@/features/workspaces/queries";
+import { redirectToLoginIfNoUser } from "@/features/auth/queries";
 
 const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
   params,

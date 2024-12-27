@@ -1,5 +1,5 @@
 import React from "react";
-import { redirectToLoginIfNoUser } from "@/features/auth/actions";
+import { redirectToLoginIfNoUser } from "@/features/auth/queries";
 
 const Page: React.FC = async () => {
   await redirectToLoginIfNoUser();
