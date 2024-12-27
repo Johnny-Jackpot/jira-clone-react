@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { WorkspaceForm } from "@/features/workspaces/components/workspace-form";
 import { getWorkspace } from "@/features/workspaces/queries";
 import { redirectToLoginIfNoUser } from "@/features/auth/queries";
+import DeleteWorkspace from "@/features/workspaces/components/delete-workspace";
 
 const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
   params,
@@ -17,8 +18,9 @@ const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
   }
 
   return (
-    <div className="w-full lg:max-w-xl">
+    <div className="w-full lg:max-w-xl flex flex-col gap-y-4">
       <WorkspaceForm initialValues={workspace} />
+      <DeleteWorkspace workspace={workspace} />
     </div>
   );
 };
