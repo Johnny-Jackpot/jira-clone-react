@@ -142,6 +142,27 @@ const app = new Hono()
 
       return c.json({ data: { $id: workspaceId } });
     },
+  )
+  .post(
+    ":workspaceId/reset-invite-code",
+    sessionMiddleware,
+    userIsWorkspaceAdminMiddleware,
+    async (c) => {
+      const workspaceId = c.req.param("workspaceId");
+
+      const databases: DatabasesType = c.get("databases");
+
+      const workspace = await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId,
+        {
+          inviteCode: generateInviteCode(10),
+        },
+      );
+
+      return c.json({ data: workspace });
+    },
   );
 
 export default app;
