@@ -3,6 +3,7 @@ import {
   ID,
   type Databases as DatabasesType,
   type Storage as StorageType,
+  Models,
 } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
 import { workspaceSchema } from "@/features/workspaces/schemas";
@@ -13,7 +14,7 @@ import {
   MEMBERS_ID,
   WORKSPACES_ID,
 } from "@/config";
-import { MemberRole } from "@/features/members/types";
+import { Member, MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { workspacesUtils } from "@/features/workspaces/utils";
 import { imagesUtils } from "@/features/storage/images/utils";
@@ -113,7 +114,34 @@ const app = new Hono()
     ":workspaceId",
     sessionMiddleware,
     userIsWorkspaceAdminMiddleware,
-    async (c) => {},
+    async (c) => {
+      const workspaceId = c.req.param("workspaceId");
+
+      const databases: DatabasesType = c.get("databases");
+      const storage: StorageType = c.get("storage");
+
+      const workspace = await workspacesUtils.getWorkspace(
+        workspaceId,
+        databases,
+      );
+
+      if (!workspace) {
+        return c.json({ error: "Not Found" }, 404);
+      }
+
+      if (workspace.imageId) {
+        await storage.deleteFile(IMAGES_BUCKET_ID, workspace.imageId);
+      }
+
+      await databases.deleteDocument(DATABASE_ID, WORKSPACES_ID, workspaceId);
+
+      const member: Models.Document<Member> = c.get("member");
+      await databases.deleteDocument(DATABASE_ID, MEMBERS_ID, member.$id);
+
+      //TODO: delete projects and tasks
+
+      return c.json({ data: { $id: workspaceId } });
+    },
   );
 
 export default app;

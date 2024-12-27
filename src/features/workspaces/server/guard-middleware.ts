@@ -1,10 +1,16 @@
 import { createMiddleware } from "hono/factory";
-import type { Databases as DatabasesType } from "node-appwrite";
+import type { Databases as DatabasesType, Models } from "node-appwrite";
 import { getMember } from "@/features/members/utils";
-import { MemberRole } from "@/features/members/types";
+import { Member, MemberRole } from "@/features/members/types";
 
-export const userIsWorkspaceAdminMiddleware = createMiddleware(
-  async (c, next) => {
+type AdditionalContext = {
+  Variables: {
+    member: Models.Document<Member>;
+  };
+};
+
+export const userIsWorkspaceAdminMiddleware =
+  createMiddleware<AdditionalContext>(async (c, next) => {
     const user = c.get("user");
     const databases: DatabasesType = c.get("databases");
     const workspaceId = c.req.param("workspaceId");
@@ -19,6 +25,7 @@ export const userIsWorkspaceAdminMiddleware = createMiddleware(
       return c.json({ error: "Forbidden" }, 403);
     }
 
+    c.set("member", member);
+
     await next();
-  },
-);
+  });
