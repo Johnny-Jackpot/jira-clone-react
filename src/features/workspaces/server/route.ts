@@ -41,10 +41,10 @@ const app = new Hono()
       const databases: DatabasesType = c.get("databases");
       const storage: StorageType = c.get("storage");
 
-      const { storedImage, imagePreview } = await imagesUtils.storeImage({
+      const { storedImage, imagePreview } = await imagesUtils.storeImage(
         storage,
         image,
-      });
+      );
 
       const workspace = await databases.createDocument(
         DATABASE_ID,
@@ -90,10 +90,10 @@ const app = new Hono()
         return c.status(403).json({ error: "Forbidden" });
       }
 
-      const { storedImage, imagePreview } = await imagesUtils.storeImage({
+      const { storedImage, imagePreview } = await imagesUtils.storeImage(
         storage,
         image,
-      });
+      );
 
       const workspace = await workspacesUtils.getWorkspace(
         workspaceId,
