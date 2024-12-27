@@ -119,7 +119,7 @@ const app = new Hono()
         await storage.deleteFile(IMAGES_BUCKET_ID, oldImageId);
       }
 
-      return c.json({data: updatedWorkspace});
+      return c.json({ data: updatedWorkspace });
     },
   );
 
