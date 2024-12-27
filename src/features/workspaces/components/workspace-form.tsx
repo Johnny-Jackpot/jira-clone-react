@@ -160,7 +160,7 @@ export const WorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
                             size="xs"
                             className="w-fit mt-2"
                             onClick={() => {
-                              field.onChange(null);
+                              field.onChange("");
                               if (inputRef.current) {
                                 inputRef.current.value = "";
                               }
