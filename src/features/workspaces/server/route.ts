@@ -73,8 +73,8 @@ const app = new Hono()
     sessionMiddleware,
     zValidator("form", workspaceSchema),
     async (c) => {
-      const { workspaceId } = c.req.params;
-      const { name, image } = c.req.body;
+      const workspaceId = c.req.param("workspaceId");
+      const { name, image } = c.req.valid("form");
 
       const user = c.get("user");
       const databases: DatabasesType = c.get("databases");
