@@ -17,7 +17,7 @@ export const workspaceSchema = z.object({
 
         return new File([blob], blob.name, { type: blob.type });
       }),
-      z.string().transform((value) => (value === "" ? undefined : value)),
+      z.string(),
     ])
     .optional(),
 });

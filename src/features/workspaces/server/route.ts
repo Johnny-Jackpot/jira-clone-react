@@ -90,16 +90,16 @@ const app = new Hono()
         return c.status(403).json({ error: "Forbidden" });
       }
 
-      const { storedImage, imagePreview } = await imagesUtils.storeImage(
-        storage,
-        image,
-      );
-
       const workspace = await workspacesUtils.getWorkspace(
         workspaceId,
         databases,
       );
       const oldImageId = workspace?.imageId;
+
+      const { storedImage, imagePreview } = await imagesUtils.storeImage(
+        storage,
+        image,
+      );
 
       const updatedWorkspace = await databases.updateDocument(
         DATABASE_ID,
@@ -107,12 +107,12 @@ const app = new Hono()
         workspaceId,
         {
           name,
-          imageId: storedImage?.$id,
-          imagePreview,
+          imageId: image ? storedImage?.$id : null,
+          imagePreview: image ? imagePreview : null,
         },
       );
 
-      if (storedImage && oldImageId) {
+      if ((storedImage || !image) && oldImageId) {
         await storage.deleteFile(IMAGES_BUCKET_ID, oldImageId);
       }
 

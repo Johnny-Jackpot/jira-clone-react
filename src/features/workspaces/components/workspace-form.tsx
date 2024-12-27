@@ -60,14 +60,9 @@ export const WorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
   });
 
   const onSubmit = (values: FormValues) => {
-    const finalValues = {
-      ...values,
-      image: values.image instanceof File ? values.image : "",
-    };
-
     mutate(
       {
-        form: finalValues,
+        form: values,
         param: initialValues ? { workspaceId: initialValues.$id } : undefined,
       },
       {
