@@ -14,31 +14,33 @@ export const useConfirm = (
   message: string,
   variant: ButtonProps["variant"] = "primary",
 ) => {
-  const [resolve, setResolve] = useState<(value: boolean) => void | null>(null);
+  const [promise, setPromise] = useState<{
+    resolve: (value: boolean) => void;
+  } | null>(null);
 
   const confirm = () => {
     return new Promise<boolean>((resolve) => {
-      setResolve(resolve);
+      setPromise({ resolve });
     });
   };
 
   const handleClose = () => {
-    setResolve(null);
+    setPromise(null);
   };
 
   const handleConfirm = () => {
-    resolve?.(true);
+    promise?.resolve(true);
     handleClose();
   };
 
   const handleCancel = () => {
-    resolve?.(false);
+    promise?.resolve(false);
     handleClose();
   };
 
   const ConfirmationDialog = () => {
     return (
-      <ResponsiveModal open={resolve !== null} onOpenChange={handleClose}>
+      <ResponsiveModal open={promise !== null} onOpenChange={handleClose}>
         <Card className="w-full h-full border-none shadow-none">
           <CardContent className="pt-8">
             <CardHeader className="p-0">
