@@ -1,13 +1,9 @@
-import { getCurrentUser } from "@/features/auth/actions";
+import { redirectToLoginIfNoUser } from "@/features/auth/actions";
 import { redirect } from "next/navigation";
-import { routes } from "@/features/routes";
 import { getWorkspaces } from "@/features/workspaces/actions";
 
 export default async function Home() {
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect(routes.auth.signIn);
-  }
+  await redirectToLoginIfNoUser();
 
   const workspaces = await getWorkspaces();
   if (!workspaces || workspaces.total === 0) {
