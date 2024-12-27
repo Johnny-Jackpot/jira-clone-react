@@ -21,6 +21,7 @@ import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { workspacesUtils } from "@/features/workspaces/utils";
 import { getMember } from "@/features/members/utils";
+import { storeImage } from "@/features/storage/images/utils";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -44,22 +45,10 @@ const app = new Hono()
       const databases: DatabasesType = c.get("databases");
       const storage: StorageType = c.get("storage");
 
-      let storedImage: Models.File | undefined;
-      let imagePreview: string | undefined;
-
-      if (image instanceof File) {
-        storedImage = await storage.createFile(
-          IMAGES_BUCKET_ID,
-          ID.unique(),
-          image,
-        );
-        const arrayBuffer = await storage.getFilePreview(
-          IMAGES_BUCKET_ID,
-          storedImage.$id,
-        );
-
-        imagePreview = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
-      }
+      const { storedImage, imagePreview } = await storeImage({
+        storage,
+        image,
+      });
 
       const workspace = await databases.createDocument(
         DATABASE_ID,
@@ -104,6 +93,12 @@ const app = new Hono()
       if (!member || member.role !== MemberRole.ADMIN) {
         return c.status(403).json({ error: "Forbidden" });
       }
+
+      const { storedImage, imagePreview } = await storeImage({
+        storage,
+        image,
+      });
+
     },
   );
 
