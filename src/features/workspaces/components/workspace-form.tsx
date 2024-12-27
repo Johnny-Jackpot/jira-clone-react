@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
-import { ImageIcon } from "lucide-react";
+import { ArrowLeftIcon, ImageIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { workspaceSchema } from "@/features/workspaces/schemas";
@@ -88,11 +88,11 @@ export const WorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
 
   return (
     <Card className="w-full h-full border-none shadow-none">
-      <CardHeader className="flex p-7">
-        <CardTitle className="text-xl font-bold">
-          {initialValues ? initialValues.name : "Create a new workspace"}
-        </CardTitle>
-      </CardHeader>
+      {initialValues ? (
+        <UpdateWorkspaceHeader workspace={initialValues} />
+      ) : (
+        <CreateWorkspaceHeader />
+      )}
       <div className="px-7">
         <DottedSeparator />
       </div>
@@ -181,12 +181,41 @@ export const WorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
                 Cancel
               </Button>
               <Button type="submit" size="lg" disabled={isPending}>
-                {initialValues ? "Update Workspace" : "Create Workspace"}
+                {initialValues ? "Save changes" : "Create Workspace"}
               </Button>
             </div>
           </form>
         </Form>
       </CardContent>
     </Card>
+  );
+};
+
+const CreateWorkspaceHeader: React.FC = () => {
+  return (
+    <CardHeader className="flex p-7">
+      <CardTitle className="text-xl font-bold">
+        Create a new workspace
+      </CardTitle>
+    </CardHeader>
+  );
+};
+
+const UpdateWorkspaceHeader: React.FC<{ workspace: Workspace }> = ({
+  workspace,
+}) => {
+  const router = useRouter();
+  const onClick = () => {
+    router.push(`/workspaces/${workspace.$id}`);
+  };
+
+  return (
+    <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
+      <Button size="sm" variant="secondary" onClick={onClick}>
+        <ArrowLeftIcon className="size-4 mr-2" />
+        Back
+      </Button>
+      <CardTitle className="text-xl font-bold">{workspace.name}</CardTitle>
+    </CardHeader>
   );
 };

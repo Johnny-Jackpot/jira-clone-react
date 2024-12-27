@@ -17,7 +17,7 @@ const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
   }
 
   return (
-    <div>
+    <div className="w-full lg:max-w-xl">
       <WorkspaceForm initialValues={workspace} />
     </div>
   );
