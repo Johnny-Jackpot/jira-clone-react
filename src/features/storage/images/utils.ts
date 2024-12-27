@@ -2,17 +2,11 @@ import { ID, Models, type Storage } from "node-appwrite";
 import { IMAGES_BUCKET_ID } from "@/config";
 
 export const imagesUtils = {
-  async storeImage({
-    storage,
-    image,
-  }: {
-    storage: Storage;
-    image: File | string | undefined;
-  }) {
+  async storeImage(storage: Storage, image: File | string | undefined) {
     let storedImage: Models.File | undefined = undefined;
     let imagePreview: string | undefined = undefined;
 
-    if ((!image) instanceof File) {
+    if (!(image instanceof File)) {
       return { storedImage, imagePreview };
     }
 

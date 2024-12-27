@@ -12,6 +12,7 @@ import {
 import { sessionMiddleware } from "@/lib/session-middleware";
 import {
   DATABASE_ID,
+  IMAGES_BUCKET_ID,
   MEMBERS_ID,
   WORKSPACES_ID,
 } from "@/config";
@@ -92,14 +93,33 @@ const app = new Hono()
         return c.status(403).json({ error: "Forbidden" });
       }
 
-      const { storedImage, imagePreview } = await imagesUtils.storeImage ({
+      const { storedImage, imagePreview } = await imagesUtils.storeImage({
         storage,
         image,
       });
 
-      const workspace = await workspacesUtils.getWorkspace(workspaceId, databases);
+      const workspace = await workspacesUtils.getWorkspace(
+        workspaceId,
+        databases,
+      );
+      const oldImageId = workspace?.imageId;
 
+      const updatedWorkspace = await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId,
+        {
+          name,
+          imageId: storedImage?.$id,
+          imagePreview,
+        },
+      );
 
+      if (storedImage && oldImageId) {
+        await storage.deleteFile(IMAGES_BUCKET_ID, oldImageId);
+      }
+
+      return c.json({data: updatedWorkspace});
     },
   );
 
