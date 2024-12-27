@@ -181,7 +181,7 @@ export const WorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
                 Cancel
               </Button>
               <Button type="submit" size="lg" disabled={isPending}>
-                Create Workspace
+                {initialValues ? "Update Workspace" : "Create Workspace"}
               </Button>
             </div>
           </form>

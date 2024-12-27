@@ -18,12 +18,7 @@ const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
 
   return (
     <div>
-      <WorkspaceForm
-        initialValues={workspace}
-        onCancel={() => {
-          redirect(urlToRedirect);
-        }}
-      />
+      <WorkspaceForm initialValues={workspace} />
     </div>
   );
 };
