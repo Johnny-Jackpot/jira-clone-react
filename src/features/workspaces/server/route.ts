@@ -5,10 +5,7 @@ import {
   type Storage as StorageType,
 } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
-import {
-  createWorkspaceSchema,
-  updateWorkspaceSchema,
-} from "@/features/workspaces/schemas";
+import { workspaceSchema } from "@/features/workspaces/schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import {
   DATABASE_ID,
@@ -36,7 +33,7 @@ const app = new Hono()
   .post(
     "/",
     sessionMiddleware,
-    zValidator("form", createWorkspaceSchema),
+    zValidator("form", workspaceSchema),
     async (c) => {
       const { name, image } = c.req.valid("form");
 
@@ -74,7 +71,7 @@ const app = new Hono()
   .patch(
     "/:workspaceId",
     sessionMiddleware,
-    zValidator("form", updateWorkspaceSchema),
+    zValidator("form", workspaceSchema),
     async (c) => {
       const { workspaceId } = c.req.params;
       const { name, image } = c.req.body;

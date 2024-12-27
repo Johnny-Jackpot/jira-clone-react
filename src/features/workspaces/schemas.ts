@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const shape = {
+export const workspaceSchema = z.object({
   name: z.string().trim().min(1, "Required"),
   image: z
     .union([
@@ -20,11 +20,4 @@ const shape = {
       z.string().transform((value) => (value === "" ? undefined : value)),
     ])
     .optional(),
-};
-
-export const createWorkspaceSchema = z.object(shape);
-export const updateWorkspaceSchema = z.object({
-  ...shape,
-  //if no name is provided, it will be considered that we don't want to update it
-  name: z.string().trim().min(1, "Must be at least 1 character").optional(),
 });
