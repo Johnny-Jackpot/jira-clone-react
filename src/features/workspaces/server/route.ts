@@ -6,7 +6,10 @@ import {
   Models,
 } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
-import { createWorkspaceSchema } from "@/features/workspaces/schemas";
+import {
+  createWorkspaceSchema,
+  updateWorkspaceSchema,
+} from "@/features/workspaces/schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import {
   DATABASE_ID,
@@ -17,6 +20,7 @@ import {
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { workspacesUtils } from "@/features/workspaces/utils";
+import { getMember } from "@/features/members/utils";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -77,6 +81,29 @@ const app = new Hono()
       });
 
       return c.json({ data: workspace });
+    },
+  )
+  .patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", updateWorkspaceSchema),
+    async (c) => {
+      const { workspaceId } = c.req.params;
+      const { name, image } = c.req.body;
+
+      const user = c.get("user");
+      const databases: DatabasesType = c.get("databases");
+      const storage: StorageType = c.get("storage");
+
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member || member.role !== MemberRole.ADMIN) {
+        return c.status(403).json({ error: "Forbidden" });
+      }
     },
   );
 
