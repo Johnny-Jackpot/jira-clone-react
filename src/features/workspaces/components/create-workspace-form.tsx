@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useCreateWorkspace } from "@/features/workspaces/api/use-create-workspace";
+import {cn} from "@/lib/utils";
 
 type CreateWorkspaceFormProps = {
   onCancel?: () => void;
@@ -157,6 +158,7 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
                 variant="secondary"
                 onClick={onCancel}
                 disabled={isPending}
+                className={cn(!onCancel && "invisible")}
               >
                 Cancel
               </Button>
