@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ResponsiveModal } from "@/components/responsive-modal";
-import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
+import { WorkspaceForm } from "@/features/workspaces/components/workspace-form";
 import { useCreateWorkspaceModal } from "@/features/workspaces/hooks/use-create-workspace-modal";
 
 export const CreateWorkspaceModal: React.FC = () => {
@@ -10,7 +10,7 @@ export const CreateWorkspaceModal: React.FC = () => {
 
   return (
     <ResponsiveModal open={isOpen} onOpenChange={setIsOpen}>
-      <CreateWorkspaceForm onCancel={close} />
+      <WorkspaceForm onCancel={close} />
     </ResponsiveModal>
   );
 };

@@ -22,26 +22,41 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useCreateWorkspace } from "@/features/workspaces/api/use-create-workspace";
-import {cn} from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { Workspace } from "@/features/workspaces/types";
+import { useUpdateWorkspace } from "@/features/workspaces/api/use-update-workspace";
 
 type CreateWorkspaceFormProps = {
   onCancel?: () => void;
+  initialValues?: Workspace;
 };
 
 type FormValues = z.infer<typeof workspaceSchema>;
 
-export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
+export const WorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
   onCancel,
+  initialValues,
 }) => {
   const router = useRouter();
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const { mutate, isPending } = useCreateWorkspace();
+  const createQuery = useCreateWorkspace();
+  const updateQuery = useUpdateWorkspace();
+  const mutate = initialValues ? updateQuery.mutate : createQuery.mutate;
+  const isPending = initialValues
+    ? updateQuery.isLoading
+    : createQuery.isLoading;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(workspaceSchema),
-    defaultValues: {
-      name: "",
-    },
+    defaultValues: initialValues
+      ? {
+          ...initialValues,
+          image: initialValues.imagePreview ?? "",
+        }
+      : {
+          name: "",
+        },
   });
 
   const onSubmit = (values: FormValues) => {
@@ -51,7 +66,10 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
     };
 
     mutate(
-      { form: finalValues },
+      {
+        form: finalValues,
+        param: initialValues ? { workspaceId: initialValues.$id } : undefined,
+      },
       {
         onSuccess: ({ data }) => {
           form.reset();
@@ -72,7 +90,7 @@ export const CreateWorkspaceForm: React.FC<CreateWorkspaceFormProps> = ({
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
         <CardTitle className="text-xl font-bold">
-          Create a new workspace
+          {initialValues ? initialValues.name : "Create a new workspace"}
         </CardTitle>
       </CardHeader>
       <div className="px-7">
