@@ -16,8 +16,8 @@ import {
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { workspacesUtils } from "@/features/workspaces/utils";
-import { getMember } from "@/features/members/utils";
 import { imagesUtils } from "@/features/storage/images/utils";
+import { userIsWorkspaceAdminMiddleware } from "@/features/workspaces/server/guard-middleware";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -71,24 +71,14 @@ const app = new Hono()
   .patch(
     "/:workspaceId",
     sessionMiddleware,
+    userIsWorkspaceAdminMiddleware,
     zValidator("form", workspaceSchema),
     async (c) => {
       const workspaceId = c.req.param("workspaceId");
       const { name, image } = c.req.valid("form");
 
-      const user = c.get("user");
       const databases: DatabasesType = c.get("databases");
       const storage: StorageType = c.get("storage");
-
-      const member = await getMember({
-        databases,
-        workspaceId,
-        userId: user.$id,
-      });
-
-      if (!member || member.role !== MemberRole.ADMIN) {
-        return c.status(403).json({ error: "Forbidden" });
-      }
 
       const workspace = await workspacesUtils.getWorkspace(
         workspaceId,
@@ -118,6 +108,12 @@ const app = new Hono()
 
       return c.json({ data: updatedWorkspace });
     },
+  )
+  .delete(
+    ":workspaceId",
+    sessionMiddleware,
+    userIsWorkspaceAdminMiddleware,
+    async (c) => {},
   );
 
 export default app;
