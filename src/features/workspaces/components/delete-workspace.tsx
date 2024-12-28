@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useDeleteWorkspace } from "@/features/workspaces/api/use-delete-workspace";
+import { DottedSeparator } from "@/components/dotted-separator";
 
 type DeleteWorkspaceProps = {
   workspace: Workspace;
@@ -51,6 +52,7 @@ const DeleteWorkspace: React.FC<DeleteWorkspaceProps> = ({ workspace }) => {
             Deleting workspace is irreversible and will remove all associated
             data
           </p>
+          <DottedSeparator className="py-7" />
           <Button
             className="mt-6 w-fit ml-auto"
             size="sm"
