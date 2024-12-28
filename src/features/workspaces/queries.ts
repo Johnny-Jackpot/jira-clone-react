@@ -35,3 +35,18 @@ export const getWorkspace = async (workspaceId: string) => {
     return null;
   }
 };
+
+export const getWorkspaceInfo = async (workspaceId: string) => {
+  try {
+    const { databases } = await createSessionClient();
+
+    const workspace = await workspacesUtils.getWorkspace(
+      workspaceId,
+      databases,
+    );
+
+    return { name: workspace.name };
+  } catch (e) {
+    return null;
+  }
+};

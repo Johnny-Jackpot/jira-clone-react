@@ -6,7 +6,7 @@ import { redirectToLoginIfNoUser } from "@/features/auth/queries";
 import DeleteWorkspace from "@/features/workspaces/components/delete-workspace";
 import ResetInviteCode from "@/features/workspaces/components/reset-invite-code";
 
-const WorkspaceIdSettings: React.FC<WorkspaceIdSettingsProps> = async ({
+const WorkspaceIdSettings: React.FC = async ({
   params,
 }) => {
   await redirectToLoginIfNoUser();
