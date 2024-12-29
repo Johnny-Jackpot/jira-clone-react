@@ -35,7 +35,7 @@ export const JoinWorkspaceForm: React.FC<JoinWorkspaceFormProps> = ({
       },
       {
         onSuccess: ({ data }) => {
-          router.push(`/workspaces/${data.id}`);
+          router.push(`/workspaces/${data.$id}`);
         },
       },
     );
