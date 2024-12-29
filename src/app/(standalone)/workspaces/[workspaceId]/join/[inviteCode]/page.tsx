@@ -12,7 +12,11 @@ const WorkspaceIdJoinPage: React.FC = async ({ params }) => {
     redirect("/");
   }
 
-  return <JoinWorkspaceForm workspaceInfo={workspaceInfo} />;
+  return (
+    <div className="w-full lg:max-w-xl">
+      <JoinWorkspaceForm workspaceInfo={workspaceInfo} />
+    </div>
+  );
 };
 
 export default WorkspaceIdJoinPage;
