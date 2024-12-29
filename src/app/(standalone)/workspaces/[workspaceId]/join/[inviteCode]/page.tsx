@@ -1,4 +1,5 @@
 import React from "react";
+import { redirect } from "next/navigation";
 import { redirectToLoginIfNoUser } from "@/features/auth/queries";
 import { getWorkspaceInfo } from "@/features/workspaces/queries";
 import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspace-form";
@@ -6,9 +7,12 @@ import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspa
 const WorkspaceIdJoinPage: React.FC = async ({ params }) => {
   await redirectToLoginIfNoUser();
   const { workspaceId } = await params;
-  const { name } = await getWorkspaceInfo(workspaceId);
+  const workspaceInfo = await getWorkspaceInfo(workspaceId);
+  if (!workspaceInfo) {
+    redirect("/");
+  }
 
-  return <JoinWorkspaceForm name={name} />;
+  return <JoinWorkspaceForm workspaceInfo={workspaceInfo} />;
 };
 
 export default WorkspaceIdJoinPage;

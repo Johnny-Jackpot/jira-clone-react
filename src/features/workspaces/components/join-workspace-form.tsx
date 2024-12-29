@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/card";
 
 type JoinWorkspaceFormProps = {
-  name: string;
+  workspaceInfo: {
+    name: string;
+  };
 };
 
 export const JoinWorkspaceForm: React.FC<JoinWorkspaceFormProps> = ({
-  name,
+  workspaceInfo: { name },
 }) => {
   return (
     <Card className="w-full h-full border-none shadow-none">
