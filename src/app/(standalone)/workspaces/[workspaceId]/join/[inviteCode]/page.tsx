@@ -6,7 +6,7 @@ import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspa
 
 const WorkspaceIdJoinPage: React.FC = async ({ params }) => {
   await redirectToLoginIfNoUser();
-  const { workspaceId } = await params;
+  const { workspaceId, inviteCode } = await params;
   const workspaceInfo = await getWorkspaceInfo(workspaceId);
   if (!workspaceInfo) {
     redirect("/");
@@ -14,7 +14,11 @@ const WorkspaceIdJoinPage: React.FC = async ({ params }) => {
 
   return (
     <div className="w-full lg:max-w-xl">
-      <JoinWorkspaceForm workspaceInfo={workspaceInfo} />
+      <JoinWorkspaceForm
+        name={workspaceInfo.name}
+        workspaceId={workspaceId}
+        inviteCode={inviteCode}
+      />
     </div>
   );
 };
