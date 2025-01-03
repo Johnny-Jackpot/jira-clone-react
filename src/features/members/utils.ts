@@ -1,24 +1,30 @@
 import { Query, type Databases } from "node-appwrite";
 import { DATABASE_ID, MEMBERS_ID } from "@/config";
 
-type GetMemberProps = {
+type GetMembersProps = {
   databases: Databases;
   workspaceId: string;
-  userId: string;
+  userId?: string;
+};
+
+export const getMembers = async ({
+  databases,
+  workspaceId,
+  userId,
+}: GetMembersProps) => {
+  const queries = [Query.equal("workspaceId", workspaceId)];
+  if (userId) {
+    queries.push(Query.equal("userId", userId));
+  }
+
+  return await databases.listDocuments(DATABASE_ID, MEMBERS_ID, queries);
 };
 
 export const getMember = async ({
   databases,
   workspaceId,
   userId,
-}: GetMemberProps) => {
-  const members = await databases.listDocuments(
-    DATABASE_ID,
-    MEMBERS_ID,
-    [
-      Query.equal('workspaceId', workspaceId),
-      Query.equal('userId', userId),
-    ]);
-
+}: Required<GetMembersProps>) => {
+  const members = await getMembers({ databases, workspaceId, userId });
   return members.documents[0];
 };

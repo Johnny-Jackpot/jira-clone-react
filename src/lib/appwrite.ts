@@ -1,6 +1,6 @@
 import "server-only";
 
-import { Client, Account, Databases } from "node-appwrite";
+import { Client, Account, Databases, Users } from "node-appwrite";
 import { AUTH_COOKIE } from "@/features/auth/constants";
 import { cookies } from "next/headers";
 
@@ -11,11 +11,14 @@ export function getAppWriteClient(): Client {
 }
 
 export async function createAdminClient() {
+  const client = getAppWriteClient().setKey(process.env.NEXT_APPWRITE_KEY!);
+
   return {
     get account() {
-      return new Account(
-        getAppWriteClient().setKey(process.env.NEXT_APPWRITE_KEY!),
-      );
+      return new Account(client);
+    },
+    get users() {
+      return new Users(client);
     },
   };
 }
