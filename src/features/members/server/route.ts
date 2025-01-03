@@ -5,6 +5,7 @@ import { sessionMiddleware } from "@/lib/session-middleware";
 import { createAdminClient } from "@/lib/appwrite";
 import { getMember } from "@/features/members/utils";
 import { DATABASE_ID, MEMBERS_ID } from "@/config";
+import { MemberRole } from "@/features/members/types";
 
 const app = new Hono()
   .get(
@@ -74,6 +75,46 @@ const app = new Hono()
     await databases.deleteDocument(DATABASE_ID, MEMBERS_ID, memberId);
 
     return c.json({ data: { $id: memberId } });
-  });
+  })
+  .patch(
+    "/:memberId",
+    sessionMiddleware,
+    zValidator("json", z.object({ role: z.nativeEnum(MemberRole) })),
+    async (c) => {
+      const { memberId } = c.req.param();
+      const { role } = c.req.valid("json");
+      const user = c.get("user");
+      const databases = c.get("databases");
+
+      const memberToUpdate = await databases.getDocument(
+        DATABASE_ID,
+        MEMBERS_ID,
+        memberId,
+      );
+
+      const currentMember = await getMember({
+        databases,
+        workspaceId: memberToUpdate.workspaceId,
+        userId: user.$id,
+      });
+      if (!currentMember || currentMember.role !== MemberRole.ADMIN) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const allMembersInWorkspace = await getMembers({
+        database: databases,
+        workspaceId: memberToUpdate.workspaceId,
+      });
+      if (allMembersInWorkspace.documents.length === 1) {
+        return c.json({ error: "Cannot downgrade the last member" }, 400);
+      }
+
+      await databases.updateDocument(DATABASE_ID, MEMBERS_ID, memberId, {
+        role,
+      });
+
+      return c.json({ data: { $id: memberId } });
+    },
+  );
 
 export default app;
