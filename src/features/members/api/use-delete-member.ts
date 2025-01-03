@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 import { client } from "@/lib/rpc";
-import { QUERY_KEY_WORKSPACES } from "@/features/workspaces/api/use-get-workspaces";
 
 type ResponseType = InferResponseType<
   (typeof client.api.members)[":memberId"]["$delete"],
