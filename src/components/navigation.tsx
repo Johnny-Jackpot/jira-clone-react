@@ -34,7 +34,7 @@ const routes = [
   },
   {
     label: "Members",
-    href: "/members",
+    getHref: (workspaceId: string) => `/workspaces/${workspaceId}/members`,
     icon: UsersIcon,
     activeIcon: UsersIcon,
   },
