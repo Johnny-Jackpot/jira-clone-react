@@ -54,7 +54,7 @@ const app = new Hono()
     );
 
     const allMembersInWorkspace = await getMembers({
-      database: databases,
+      databases,
       workspaceId: memberToDelete.workspaceId,
     });
 
