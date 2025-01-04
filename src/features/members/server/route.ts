@@ -102,7 +102,7 @@ const app = new Hono()
       }
 
       const allMembersInWorkspace = await getMembers({
-        database: databases,
+        databases,
         workspaceId: memberToUpdate.workspaceId,
       });
       if (allMembersInWorkspace.documents.length === 1) {
