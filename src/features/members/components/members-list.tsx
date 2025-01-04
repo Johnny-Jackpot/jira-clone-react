@@ -16,13 +16,51 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDeleteMember } from "@/features/members/api/use-delete-member";
+import { useUpdateMember } from "@/features/members/api/use-update-member";
+import { useConfirm } from "@/hooks/use-confirm";
+import { MemberRole } from "@/features/members/types";
 
 export const MembersList: React.FC = () => {
   const workspaceId = useWorkspaceId();
+  const [ConfirmDeleteDialog, confirm] = useConfirm(
+    "Remove member",
+    "This member will be removed from the workspace",
+    "destructive",
+  );
+
   const { data } = useGetMembers({ workspaceId });
+  const { mutate: deleteMember, isPending: isDeletingMember } =
+    useDeleteMember();
+  const { mutate: updateMember, isPending: isUpdatingMember } =
+    useUpdateMember();
+
+  const handleUpdateMember = (memberId: string, role: MemberRole) => {
+    updateMember({
+      json: { role },
+      param: { memberId },
+    });
+  };
+
+  const handleDeleteMember = async (memberId: string) => {
+    const ok = await confirm();
+    if (!ok) {
+      return;
+    }
+
+    deleteMember(
+      { param: { memberId } },
+      {
+        onSuccess: () => {
+          window.location.reload();
+        },
+      },
+    );
+  };
 
   return (
     <Card className="w-full h-full border-none shadow-none">
+      <ConfirmDeleteDialog />
       <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
         <Button variant="secondary" size="sm" asChild>
           <Link href={`/workspaces/${workspaceId}`}>
@@ -57,22 +95,26 @@ export const MembersList: React.FC = () => {
                 <DropdownMenuContent side="bottom" align="end">
                   <DropdownMenuItem
                     className="font-medium"
-                    onClick={() => {}}
-                    disabled={false}
+                    onClick={() =>
+                      handleUpdateMember(member.$id, MemberRole.ADMIN)
+                    }
+                    disabled={isUpdatingMember}
                   >
                     Set as administrator
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="font-medium"
-                    onClick={() => {}}
-                    disabled={false}
+                    onClick={() =>
+                      handleUpdateMember(member.$id, MemberRole.MEMBER)
+                    }
+                    disabled={isUpdatingMember}
                   >
                     Set as member
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="font-medium text-amber-700"
-                    onClick={() => {}}
-                    disabled={false}
+                    onClick={() => handleDeleteMember(member.$id)}
+                    disabled={isDeletingMember}
                   >
                     Remove member
                   </DropdownMenuItem>
