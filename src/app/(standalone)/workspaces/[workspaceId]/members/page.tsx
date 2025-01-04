@@ -1,6 +1,6 @@
 import React from "react";
 import { redirectToLoginIfNoUser } from "@/features/auth/queries";
-import { MembersList } from "@/features/workspaces/components/members-list";
+import { MembersList } from "@/features/members/components/members-list";
 
 const WorkspaceIdMembersPage: React.FC = async () => {
   await redirectToLoginIfNoUser();

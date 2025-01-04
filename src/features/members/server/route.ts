@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { createAdminClient } from "@/lib/appwrite";
-import { getMember } from "@/features/members/utils";
+import { getMember, getMembers } from "@/features/members/utils";
 import { DATABASE_ID, MEMBERS_ID } from "@/config";
 import { MemberRole } from "@/features/members/types";
 
