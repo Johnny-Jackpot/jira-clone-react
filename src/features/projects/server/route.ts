@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { Query } from "node-appwrite";
-import { sessionMiddleware } from "@/lib/session-middleware";
+import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
+import { sessionMiddleware } from "@/lib/session-middleware";
 import { userBelongsToWorkspaceMiddleware } from "@/features/projects/server/guard-middleware";
 import { DATABASE_ID, PROJECTS_ID } from "@/config";
 
