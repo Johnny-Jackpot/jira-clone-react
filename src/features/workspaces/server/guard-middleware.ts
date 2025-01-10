@@ -9,7 +9,7 @@ type AdditionalContext = {
   };
 };
 
-class WorkspaceMemberMiddlewareBuilder {
+export class WorkspaceMemberMiddlewareBuilder {
   private getWorkspaceId: (c) => string;
   private memberRole?: MemberRole;
 
@@ -24,6 +24,10 @@ class WorkspaceMemberMiddlewareBuilder {
   }
 
   buildMiddleware() {
+    if (!this.getWorkspaceId) {
+      throw new Error("Missing workspace id getter");
+    }
+
     return createMiddleware<AdditionalContext>(async (c, next) => {
       const user = c.get("user");
       const databases: DatabasesType = c.get("databases");
@@ -39,18 +43,19 @@ class WorkspaceMemberMiddlewareBuilder {
         userId: user.$id,
       });
 
-      if (!member || this.memberRole && member.role !== this.memberRole) {
+      if (!member || (this.memberRole && member.role !== this.memberRole)) {
         return c.json({ error: "Forbidden" }, 403);
       }
 
       c.set("member", member);
 
       await next();
-    })
+    });
   }
 }
 
-export const userIsWorkspaceAdminMiddleware = new WorkspaceMemberMiddlewareBuilder()
-  .setWorkspaceIdGetter(c => c.req.param("workspaceId"))
-  .setMemberRole(MemberRole.ADMIN)
-  .buildMiddleware();
+export const userIsWorkspaceAdminMiddleware =
+  new WorkspaceMemberMiddlewareBuilder()
+    .setWorkspaceIdGetter((c) => c.req.param("workspaceId"))
+    .setMemberRole(MemberRole.ADMIN)
+    .buildMiddleware();
