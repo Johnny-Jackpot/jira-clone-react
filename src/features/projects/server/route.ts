@@ -14,8 +14,11 @@ const app = new Hono().get(
   async (c) => {
     const databases = c.get("databases");
     const { workspaceId } = c.req.valid("query");
+    if (!workspaceId) {
+      return c.json({ error: "Missing workspace id" }, 400);
+    }
 
-    const projects = databases.listDocuments(DATABASE_ID, PROJECTS_ID, [
+    const projects = await databases.listDocuments(DATABASE_ID, PROJECTS_ID, [
       Query.equal("workspaceId", workspaceId),
       Query.orderDesc("$createdAt"),
     ]);
