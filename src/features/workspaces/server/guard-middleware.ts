@@ -9,23 +9,48 @@ type AdditionalContext = {
   };
 };
 
-export const userIsWorkspaceAdminMiddleware =
-  createMiddleware<AdditionalContext>(async (c, next) => {
-    const user = c.get("user");
-    const databases: DatabasesType = c.get("databases");
-    const workspaceId = c.req.param("workspaceId");
+class WorkspaceMemberMiddlewareBuilder {
+  private getWorkspaceId: (c) => string;
+  private memberRole?: MemberRole;
 
-    const member = await getMember({
-      databases,
-      workspaceId,
-      userId: user.$id,
-    });
+  setWorkspaceIdGetter(fn: (c) => string) {
+    this.getWorkspaceId = fn;
+    return this;
+  }
 
-    if (!member || member.role !== MemberRole.ADMIN) {
-      return c.json({ error: "Forbidden" }, 403);
-    }
+  setMemberRole(role: MemberRole) {
+    this.memberRole = role;
+    return this;
+  }
 
-    c.set("member", member);
+  buildMiddleware() {
+    return createMiddleware<AdditionalContext>(async (c, next) => {
+      const user = c.get("user");
+      const databases: DatabasesType = c.get("databases");
+      const workspaceId = this.getWorkspaceId(c);
 
-    await next();
-  });
+      if (!workspaceId) {
+        throw new Error("Could not find workspace id");
+      }
+
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member || this.memberRole && member.role !== this.memberRole) {
+        return c.json({ error: "Forbidden" }, 403);
+      }
+
+      c.set("member", member);
+
+      await next();
+    })
+  }
+}
+
+export const userIsWorkspaceAdminMiddleware = new WorkspaceMemberMiddlewareBuilder()
+  .setWorkspaceIdGetter(c => c.req.param("workspaceId"))
+  .setMemberRole(MemberRole.ADMIN)
+  .buildMiddleware();
