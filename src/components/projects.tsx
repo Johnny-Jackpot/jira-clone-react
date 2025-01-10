@@ -8,6 +8,8 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
 import { cn } from "@/lib/utils";
 import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
+import { ProjectAvatar } from "@/features/projects/components/project-avatar";
+import { Project } from "@/features/projects/types";
 
 export const Projects: React.FC = () => {
   const pathname = usePathname();
@@ -24,7 +26,7 @@ export const Projects: React.FC = () => {
           className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"
         />
       </div>
-      {data?.documents?.map((project) => {
+      {data?.documents?.map((project: Project) => {
         const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
         const isActive = pathname === href;
 
@@ -36,6 +38,7 @@ export const Projects: React.FC = () => {
                 isActive && "bg-white shadow-sm hover:opacity-100 text-primary",
               )}
             >
+              <ProjectAvatar name={project.name} image={project.imagePreview} />
               <span className="truncate">{project.name}</span>
             </div>
           </Link>
