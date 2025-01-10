@@ -13,7 +13,7 @@ import {
   canGetProjectsMiddleware,
 } from "@/features/projects/server/guard-middleware";
 import { DATABASE_ID, PROJECTS_ID } from "@/config";
-import { projectSchema } from "@/features/projects/schema";
+import { projectSchema } from "@/features/projects/schemas";
 import { imagesUtils } from "@/features/storage/images/utils";
 
 const app = new Hono()
