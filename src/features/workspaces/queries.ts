@@ -6,47 +6,32 @@ import { getMember } from "@/features/members/utils";
 import { MemberRole } from "@/features/members/types";
 
 export const getWorkspaces = async () => {
-  try {
-    const { account, databases } = await createSessionClient();
-    const user = await account.get();
+  const { account, databases } = await createSessionClient();
+  const user = await account.get();
 
-    return await workspacesUtils.getWorkspaces(user.$id, databases);
-  } catch (e) {
-    return null;
-  }
+  return await workspacesUtils.getWorkspaces(user.$id, databases);
 };
 
 export const getWorkspace = async (workspaceId: string) => {
-  try {
-    const { account, databases } = await createSessionClient();
-    const user = await account.get();
+  const { account, databases } = await createSessionClient();
+  const user = await account.get();
 
-    const member = await getMember({
-      databases,
-      workspaceId,
-      userId: user.$id,
-    });
-    if (!member || member.role !== MemberRole.ADMIN) {
-      return null;
-    }
-
-    return await workspacesUtils.getWorkspace(workspaceId, databases);
-  } catch (e) {
+  const member = await getMember({
+    databases,
+    workspaceId,
+    userId: user.$id,
+  });
+  if (!member || member.role !== MemberRole.ADMIN) {
     return null;
   }
+
+  return await workspacesUtils.getWorkspace(workspaceId, databases);
 };
 
 export const getWorkspaceInfo = async (workspaceId: string) => {
-  try {
-    const { databases } = await createSessionClient();
+  const { databases } = await createSessionClient();
 
-    const workspace = await workspacesUtils.getWorkspace(
-      workspaceId,
-      databases,
-    );
+  const workspace = await workspacesUtils.getWorkspace(workspaceId, databases);
 
-    return { name: workspace.name };
-  } catch (e) {
-    return null;
-  }
+  return { name: workspace.name };
 };
