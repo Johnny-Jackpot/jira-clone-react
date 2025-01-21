@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useDeleteWorkspace } from "@/features/workspaces/api/use-delete-workspace";
 import { DottedSeparator } from "@/components/dotted-separator";
-import {Project} from "@/features/projects/types";
+import { Project } from "@/features/projects/types";
+import { useDeleteProject } from "@/features/projects/api/use-delete-workspace";
 
 type DeleteProjectProps = {
   project: Project;
@@ -22,7 +22,7 @@ const DeleteProject: React.FC<DeleteProjectProps> = ({ project }) => {
     "destructive",
   );
 
-  const { mutate, isPending } = useDeleteWorkspace();
+  const { mutate, isPending } = useDeleteProject();
 
   const handleDelete = async () => {
     const confirmed = await confirmDelete();
@@ -49,8 +49,7 @@ const DeleteProject: React.FC<DeleteProjectProps> = ({ project }) => {
         <div className="flex flex-col">
           <h3 className="font-bold">Danger Zone</h3>
           <p className="text-sm text-muted-foreground">
-            Deleting project is irreversible and will remove all associated
-            data
+            Deleting project is irreversible and will remove all associated data
           </p>
           <DottedSeparator className="py-7" />
           <Button
