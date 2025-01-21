@@ -21,20 +21,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useUpdateWorkspace } from "@/features/workspaces/api/use-update-workspace";
 import { projectSchema } from "@/features/projects/schemas";
 import { useCreateProject } from "@/features/projects/api/use-create-project";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { Project } from "@/features/projects/types";
+import { useUpdateProject } from "@/features/projects/api/use-update-project";
+import Link from "next/link";
 
-type CreateProjectFormProps = {
+type ProjectFormProps = {
   onCancel?: () => void;
   initialValues?: Project;
 };
 
 type FormValues = z.infer<typeof projectSchema>;
 
-export const ProjectForm: React.FC<CreateProjectFormProps> = ({
+export const ProjectForm: React.FC<ProjectFormProps> = ({
   onCancel,
   initialValues,
 }) => {
@@ -43,7 +44,7 @@ export const ProjectForm: React.FC<CreateProjectFormProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const createQuery = useCreateProject();
-  const updateQuery = useUpdateWorkspace();
+  const updateQuery = useUpdateProject();
   const mutate = initialValues ? updateQuery.mutate : createQuery.mutate;
   const isPending = initialValues
     ? updateQuery.isLoading
@@ -70,7 +71,7 @@ export const ProjectForm: React.FC<CreateProjectFormProps> = ({
       {
         onSuccess: ({ data }) => {
           form.reset();
-          //TODO redirect to project screen
+          router.push(`/workspaces/${data.workspaceId}/projects/${data.$id}`)
         },
       },
     );
@@ -215,16 +216,13 @@ const CreateProjectHeader: React.FC = () => {
 };
 
 const UpdateProjectHeader: React.FC<{ project: Project }> = ({ project }) => {
-  const router = useRouter();
-  const onClick = () => {
-    //TODO: handle this
-  };
-
   return (
     <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
-      <Button size="sm" variant="secondary" onClick={onClick}>
-        <ArrowLeftIcon className="size-4 mr-2" />
-        Back
+      <Button size="sm" variant="secondary" asChild>
+        <Link href={`/workspaces/${project.workspaceId}/projects/${project.$id}`}>
+          <ArrowLeftIcon className="size-4 mr-2" />
+          Back
+        </Link>
       </Button>
       <CardTitle className="text-xl font-bold">{project.name}</CardTitle>
     </CardHeader>

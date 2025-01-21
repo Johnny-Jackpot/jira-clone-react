@@ -70,9 +70,9 @@ const app = new Hono()
     },
   )
   .patch(
-    ":projectId",
+    "/:projectId",
     sessionMiddleware,
-    zValidator("form", projectSchema.omit({ workspaceId: true })),
+    zValidator("form", projectSchema),
     canCreateProjectMiddleware,
     async (c) => {
       const { name, image } = c.req.valid("form");
