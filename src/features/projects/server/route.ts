@@ -11,8 +11,9 @@ import { sessionMiddleware } from "@/lib/session-middleware";
 import {
   canCreateProjectMiddleware,
   canGetProjectsMiddleware,
+  projectMemberMiddleware,
 } from "@/features/projects/server/guard-middleware";
-import { DATABASE_ID, PROJECTS_ID } from "@/config";
+import { DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID } from "@/config";
 import { projectSchema } from "@/features/projects/schemas";
 import { imagesUtils } from "@/features/storage/images/utils";
 import { Project } from "@/features/projects/types";
@@ -73,7 +74,7 @@ const app = new Hono()
     "/:projectId",
     sessionMiddleware,
     zValidator("form", projectSchema),
-    canCreateProjectMiddleware,
+    projectMemberMiddleware,
     async (c) => {
       const { name, image } = c.req.valid("form");
       const { projectId } = c.req.param();
@@ -98,6 +99,29 @@ const app = new Hono()
       );
 
       return c.json({ data: project });
+    },
+  )
+  .delete(
+    "/:projectId",
+    sessionMiddleware,
+    projectMemberMiddleware,
+    async (c) => {
+      const { projectId } = c.req.param();
+
+      const databases: DatabasesType = c.get("databases");
+      const storage: StorageType = c.get("storage");
+
+      const project: Project = c.get("project");
+
+      if (project.imageId) {
+        await storage.deleteFile(IMAGES_BUCKET_ID, project.imageId);
+      }
+
+      //TODO: delete  tasks
+
+      await databases.deleteDocument(DATABASE_ID, PROJECTS_ID, projectId);
+
+      return c.json({ data: { $id: projectId } });
     },
   );
 
