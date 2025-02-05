@@ -9,53 +9,35 @@ type AdditionalContext = {
   };
 };
 
-export class WorkspaceMemberMiddlewareBuilder {
-  private getWorkspaceId: (c) => string;
-  private memberRole?: MemberRole;
+function createWorkspaceMemberMiddleware(role?: MemberRole) {
+  return createMiddleware<AdditionalContext>(async (c, next) => {
+    const user = c.get("user");
+    const databases: DatabasesType = c.get("databases");
+    const workspaceId =
+      c.req.param("workspaceId") ||
+      c.req.valid("query").workspaceId ||
+      c.req.valid("form").workspaceId ||
+      c.req.valid("json").workspaceId;
 
-  setWorkspaceIdGetter(fn: (c) => string) {
-    this.getWorkspaceId = fn;
-    return this;
-  }
-
-  setMemberRole(role: MemberRole) {
-    this.memberRole = role;
-    return this;
-  }
-
-  buildMiddleware() {
-    if (!this.getWorkspaceId) {
-      throw new Error("Missing workspace id getter");
+    if (!workspaceId) {
+      throw new Error("Could not find workspace id");
     }
 
-    return createMiddleware<AdditionalContext>(async (c, next) => {
-      const user = c.get("user");
-      const databases: DatabasesType = c.get("databases");
-      const workspaceId = this.getWorkspaceId(c);
-
-      if (!workspaceId) {
-        throw new Error("Could not find workspace id");
-      }
-
-      const member = await getMember({
-        databases,
-        workspaceId,
-        userId: user.$id,
-      });
-
-      if (!member || (this.memberRole && member.role !== this.memberRole)) {
-        return c.json({ error: "Forbidden" }, 403);
-      }
-
-      c.set("member", member);
-
-      await next();
+    const member = await getMember({
+      databases,
+      workspaceId,
+      userId: user.$id,
     });
-  }
+
+    if (!member || (role && member.role !== role)) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+
+    c.set("member", member);
+
+    await next();
+  });
 }
 
-export const userIsWorkspaceAdminMiddleware =
-  new WorkspaceMemberMiddlewareBuilder()
-    .setWorkspaceIdGetter((c) => c.req.param("workspaceId"))
-    .setMemberRole(MemberRole.ADMIN)
-    .buildMiddleware();
+export const userIsWorkspaceAdminMiddleware = createWorkspaceMemberMiddleware(MemberRole.ADMIN);
+export const userBelongsToWorkspaceMiddleware = createWorkspaceMemberMiddleware();

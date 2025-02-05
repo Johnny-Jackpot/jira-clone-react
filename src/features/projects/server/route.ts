@@ -8,22 +8,19 @@ import {
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import {
-  canCreateProjectMiddleware,
-  canGetProjectsMiddleware,
-  projectMemberMiddleware,
-} from "@/features/projects/server/guard-middleware";
+import { projectMemberMiddleware } from "@/features/projects/server/guard-middleware";
 import { DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID } from "@/config";
 import { projectSchema } from "@/features/projects/schemas";
 import { imagesUtils } from "@/features/storage/images/utils";
 import { Project } from "@/features/projects/types";
+import { userBelongsToWorkspaceMiddleware } from "@/features/workspaces/server/guard-middleware";
 
 const app = new Hono()
   .get(
     "/",
     sessionMiddleware,
     zValidator("query", z.object({ workspaceId: z.string() })),
-    canGetProjectsMiddleware,
+    userBelongsToWorkspaceMiddleware,
     async (c) => {
       const databases = c.get("databases");
       const { workspaceId } = c.req.valid("query");
@@ -43,7 +40,7 @@ const app = new Hono()
     "/",
     sessionMiddleware,
     zValidator("form", projectSchema),
-    canCreateProjectMiddleware,
+    userBelongsToWorkspaceMiddleware,
     async (c) => {
       const { name, image, workspaceId } = c.req.valid("form");
 
