@@ -10,3 +10,12 @@ export const taskSchema = z.object({
   dueDate: z.coerce.date(),
   description: z.string().optional(),
 });
+
+export const getTasksSchema = z.object({
+  workspaceId: z.string(),
+  projectId: z.string().nullish(),
+  assigneeId: z.string().nullish(),
+  status: z.nativeEnum(TaskStatus).nullish(),
+  dueDate: z.string().nullish(),
+  search: z.string().nullish(),
+});
