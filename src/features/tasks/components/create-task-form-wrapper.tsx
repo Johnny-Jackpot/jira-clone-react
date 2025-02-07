@@ -6,6 +6,7 @@ import { useGetMembers } from "@/features/members/api/use-get-members";
 import { Project } from "@/features/projects/types";
 import { Member } from "@/features/members/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { TaskForm } from "@/features/tasks/components/task-form";
 
 interface CreateTaskFormWrapperProps {
   onCancel: () => void;
@@ -46,9 +47,10 @@ export const CreateTaskFormWrapper: React.FC<CreateTaskFormWrapperProps> = ({
   }
 
   return (
-    <div>
-      {JSON.stringify(projectOptions)}
-      {JSON.stringify(memberOptions)}
-    </div>
+    <TaskForm
+      projectOptions={projectOptions ?? []}
+      memberOptions={memberOptions ?? []}
+      onCancel={onCancel}
+    />
   );
 };
