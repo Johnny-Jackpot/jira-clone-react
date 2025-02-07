@@ -74,7 +74,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       {
         onSuccess: ({ data }) => {
           form.reset();
-          //TODO redirect to new task
+          onCancel?.();
         },
       },
     );
