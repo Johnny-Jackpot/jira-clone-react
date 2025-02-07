@@ -15,9 +15,9 @@ function createWorkspaceMemberMiddleware(role?: MemberRole) {
     const databases: DatabasesType = c.get("databases");
     const workspaceId =
       c.req.param("workspaceId") ||
-      c.req.valid("query").workspaceId ||
-      c.req.valid("form").workspaceId ||
-      c.req.valid("json").workspaceId;
+      c.req.valid("query")?.workspaceId ||
+      c.req.valid("form")?.workspaceId ||
+      c.req.valid("json")?.workspaceId;
 
     if (!workspaceId) {
       throw new Error("Could not find workspace id");
