@@ -6,8 +6,14 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useGetTasks } from "@/features/tasks/api/use-get-tasks";
 
 export const TaskViewSwitcher: React.FC = () => {
+  const workspaceId = useWorkspaceId();
+  const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
+    workspaceId,
+  });
   const { open } = useCreateTaskModal();
 
   return (
@@ -35,13 +41,13 @@ export const TaskViewSwitcher: React.FC = () => {
         <DottedSeparator className="my-4" />
         <>
           <TabsContent value="table" className="mt-0">
-            Data table
+            {JSON.stringify(tasks)}
           </TabsContent>
           <TabsContent value="kanban" className="mt-0">
-            Data kanban
+            {JSON.stringify(tasks)}
           </TabsContent>
           <TabsContent value="calendar" className="mt-0">
-            Data calendar
+            {JSON.stringify(tasks)}
           </TabsContent>
         </>
       </div>

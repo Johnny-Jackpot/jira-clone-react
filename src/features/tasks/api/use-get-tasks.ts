@@ -5,7 +5,7 @@ type UseGetTasksProps = {
   workspaceId: string;
 };
 
-export const useGetTask = ({ workspaceId }: UseGetTasksProps) => {
+export const useGetTasks = ({ workspaceId }: UseGetTasksProps) => {
   return useQuery({
     queryKey: ["tasks", workspaceId],
     queryFn: async () => {

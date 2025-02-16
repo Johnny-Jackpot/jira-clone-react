@@ -3,7 +3,7 @@ import { ID, Query } from "node-appwrite";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { zValidator } from "@hono/zod-validator";
 import { getTasksSchema, taskSchema } from "@/features/tasks/schemas";
-import { DATABASE_ID, PROJECTS_ID, TASKS_ID } from "@/config";
+import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID } from "@/config";
 import { userBelongsToWorkspaceMiddleware } from "@/features/workspaces/server/guard-middleware";
 import { Project } from "@/features/projects/types";
 import { Member } from "@/features/members/types";
@@ -16,7 +16,7 @@ const app = new Hono()
     zValidator("query", getTasksSchema),
     userBelongsToWorkspaceMiddleware,
     async (c) => {
-      const { users } = createAdminClient();
+      const { users } = await createAdminClient();
       const databases = c.get("databases");
       const { workspaceId, projectId, assigneeId, status, dueDate, search } =
         c.req.valid("query");
@@ -62,7 +62,10 @@ const app = new Hono()
         };
       };
       const assignees = await Promise.all(members.documents.map(getAssignee));
-      const assigneesMap: Map<string, Awaited<ReturnType<typeof getAssignee>>> = new Map();
+      const assigneesMap: Map<
+        string,
+        Awaited<ReturnType<typeof getAssignee>>
+      > = new Map();
       assignees.forEach((assignee) => assigneesMap.set(assignee.$id, assignee));
 
       const populatedTasks = tasks.documents.map((task) => ({
