@@ -9,6 +9,7 @@ import { DottedSeparator } from "@/components/dotted-separator";
 import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useGetTasks } from "@/features/tasks/api/use-get-tasks";
+import { DataFilters } from "./data-filters";
 
 export const TaskViewSwitcher: React.FC = () => {
   const [view, setView] = useQueryState("task-view", {
@@ -46,7 +47,7 @@ export const TaskViewSwitcher: React.FC = () => {
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        Data filters
+        <DataFilters />
         <DottedSeparator className="my-4" />
         {isLoadingTasks ? (
           <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">

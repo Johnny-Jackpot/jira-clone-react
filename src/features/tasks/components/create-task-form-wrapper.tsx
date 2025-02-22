@@ -3,8 +3,6 @@ import { Loader } from "lucide-react";
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useGetMembers } from "@/features/members/api/use-get-members";
-import { Project } from "@/features/projects/types";
-import { Member } from "@/features/members/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { TaskForm } from "@/features/tasks/components/task-form";
 
@@ -23,13 +21,13 @@ export const CreateTaskFormWrapper: React.FC<CreateTaskFormWrapperProps> = ({
     workspaceId,
   });
 
-  const projectOptions = projects?.documents.map((project: Project) => ({
+  const projectOptions = projects?.documents.map((project) => ({
     id: project.$id,
     name: project.name,
     imagePreview: project.imagePreview,
   }));
 
-  const memberOptions = members?.documents.map((member: Member) => ({
+  const memberOptions = members?.documents.map((member) => ({
     id: member.$id,
     name: member.name,
   }));
