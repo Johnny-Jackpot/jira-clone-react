@@ -14,7 +14,7 @@ import { Calendar } from "@/components/ui/calendar";
 
 type DatePickerProps = {
   value: Date | undefined;
-  onChange: () => void;
+  onChange: (date: Date) => void;
   className?: string;
   placeholder?: string;
 };
@@ -34,7 +34,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           className={cn(
             "w-full justify-start items-center text-left font-normal px-3",
             !value && "text-muted-foreground",
-            className,
+            className
           )}
         >
           <CalendarIcon className="mr-2 mb-0.5 h-4 w-4" />

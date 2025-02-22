@@ -10,8 +10,10 @@ import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useGetTasks } from "@/features/tasks/api/use-get-tasks";
 import { DataFilters } from "./data-filters";
+import { useTaskFilters } from "../hooks/use-task-filters";
 
 export const TaskViewSwitcher: React.FC = () => {
+  const [{ status, search, projectId, assigneeId, dueDate }] = useTaskFilters();
   const [view, setView] = useQueryState("task-view", {
     defaultValue: "table",
   });
@@ -19,6 +21,11 @@ export const TaskViewSwitcher: React.FC = () => {
   const workspaceId = useWorkspaceId();
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
+    status,
+    search,
+    projectId,
+    assigneeId,
+    dueDate,
   });
   const { open } = useCreateTaskModal();
 

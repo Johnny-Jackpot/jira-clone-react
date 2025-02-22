@@ -29,7 +29,7 @@ const app = new Hono()
       if (projectId) query.push(Query.equal("projectId", projectId));
       if (assigneeId) query.push(Query.equal("assigneeId", assigneeId));
       if (status) query.push(Query.equal("status", status));
-      if (dueDate) query.push(Query.equal("status", dueDate));
+      if (dueDate) query.push(Query.lessThanEqual("dueDate", dueDate));
       if (search) query.push(Query.search("name", search));
 
       const tasks = await databases.listDocuments(DATABASE_ID, TASKS_ID, query);
@@ -39,17 +39,17 @@ const app = new Hono()
       const projects = await databases.listDocuments<Project>(
         DATABASE_ID,
         PROJECTS_ID,
-        projectIds.length > 0 ? [Query.contains("$id", projectIds)] : [],
+        projectIds.length > 0 ? [Query.contains("$id", projectIds)] : []
       );
       const projectsMap = new Map<string, Project>();
       projects.documents.forEach((project) =>
-        projectsMap.set(project.$id, project),
+        projectsMap.set(project.$id, project)
       );
 
       const members = await databases.listDocuments<Member>(
         DATABASE_ID,
         MEMBERS_ID,
-        assigneeIds.length > 0 ? [Query.contains("$id", assigneeIds)] : [],
+        assigneeIds.length > 0 ? [Query.contains("$id", assigneeIds)] : []
       );
 
       const getAssignee = async (member: Member) => {
@@ -80,7 +80,7 @@ const app = new Hono()
           documents: populatedTasks,
         },
       });
-    },
+    }
   )
   .post(
     "/",
@@ -100,7 +100,7 @@ const app = new Hono()
           Query.equal("workspaceId", workspaceId),
           Query.orderAsc("position"),
           Query.limit(1),
-        ],
+        ]
       );
 
       const newPosition =
@@ -120,11 +120,11 @@ const app = new Hono()
           dueDate,
           assigneeId,
           position: newPosition,
-        },
+        }
       );
 
       return c.json({ data: task });
-    },
+    }
   );
 
 export default app;
