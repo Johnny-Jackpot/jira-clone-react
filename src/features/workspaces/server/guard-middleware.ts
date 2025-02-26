@@ -5,7 +5,7 @@ import { Member, MemberRole } from "@/features/members/types";
 
 type AdditionalContext = {
   Variables: {
-    member: Models.Document<Member>;
+    member: Models.Document & Member;
   };
 };
 
@@ -39,5 +39,8 @@ function createWorkspaceMemberMiddleware(role?: MemberRole) {
   });
 }
 
-export const userIsWorkspaceAdminMiddleware = createWorkspaceMemberMiddleware(MemberRole.ADMIN);
-export const userBelongsToWorkspaceMiddleware = createWorkspaceMemberMiddleware();
+export const userIsWorkspaceAdminMiddleware = createWorkspaceMemberMiddleware(
+  MemberRole.ADMIN
+);
+export const userBelongsToWorkspaceMiddleware =
+  createWorkspaceMemberMiddleware();
