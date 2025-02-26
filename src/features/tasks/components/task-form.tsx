@@ -21,9 +21,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { Project } from "@/features/projects/types";
 import { taskSchema } from "@/features/tasks/schemas";
 import { useCreateTask } from "@/features/tasks/api/use-create-task";
+import { useUpdateTask } from "@/features/tasks/api/use-update-task";
 import { DatePicker } from "@/components/date-picker";
 import {
   Select,
@@ -33,14 +33,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { TaskStatus } from "@/features/tasks/types";
+import { Task, TaskStatus } from "@/features/tasks/types";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 
 type TaskFormProps = {
   projectOptions: { id: string; name: string; imagePreview: string }[];
   memberOptions: { id: string; name: string }[];
   onCancel?: () => void;
-  initialValues?: object;
+  initialValues?: Task;
 };
 
 type FormValues = z.infer<typeof taskSchema>;
@@ -54,20 +54,26 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   const workspaceId = useWorkspaceId();
   const router = useRouter();
 
-  const createQuery = useCreateTask();
-  const updateQuery = useCreateTask();
-  const mutate = initialValues ? updateQuery.mutate : createQuery.mutate;
+  const createMutation = useCreateTask();
+  const updateMutation = useUpdateTask();
   const isPending = initialValues
-    ? updateQuery.isLoading
-    : createQuery.isLoading;
+    ? updateMutation.isPending
+    : createMutation.isPending;
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(taskSchema),
-    defaultValues: { workspaceId },
+    resolver: zodResolver(
+      taskSchema.omit({ workspaceId: true, description: true })
+    ),
+    defaultValues: {
+      workspaceId,
+      ...(initialValues
+        ? { ...initialValues, dueDate: new Date(initialValues.dueDate) }
+        : {}),
+    },
   });
 
-  const onSubmit = (values: FormValues) => {
-    mutate(
+  const onSubmitCreate = (values: FormValues) => {
+    createMutation.mutate(
       {
         json: { ...values, workspaceId },
       },
@@ -76,14 +82,29 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           form.reset();
           onCancel?.();
         },
+      }
+    );
+  };
+
+  const onSubmitUpdate = (values: FormValues) => {
+    updateMutation.mutate(
+      {
+        json: { ...values, workspaceId },
+        param: { taskId: (initialValues as Task).$id },
       },
+      {
+        onSuccess: ({ data }) => {
+          form.reset();
+          onCancel?.();
+        },
+      }
     );
   };
 
   return (
     <Card className="w-full h-full border-none shadow-none">
       {initialValues ? (
-        <UpdateTaskHeader project={initialValues} />
+        <UpdateTaskHeader task={initialValues} />
       ) : (
         <CreateTaskHeader />
       )}
@@ -92,7 +113,11 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       </div>
       <CardContent className="p-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={form.handleSubmit(
+              initialValues ? onSubmitUpdate : onSubmitCreate
+            )}
+          >
             <div className="flex flex-col gap-y-4">
               <FormField
                 control={form.control}
@@ -252,18 +277,18 @@ const CreateTaskHeader: React.FC = () => {
   );
 };
 
-const UpdateTaskHeader: React.FC<{ project: Project }> = ({ project }) => {
+const UpdateTaskHeader: React.FC<{ task: Task }> = ({ task }) => {
   return (
     <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
       <Button size="sm" variant="secondary" asChild>
         <Link
-          href={`/workspaces/${project.workspaceId}/projects/${project.$id}`}
+          href={`/workspaces/${task.workspaceId}/projects/${task.projectId}`}
         >
           <ArrowLeftIcon className="size-4 mr-2" />
           Back
         </Link>
       </Button>
-      <CardTitle className="text-xl font-bold">{project.name}</CardTitle>
+      <CardTitle className="text-xl font-bold">Edit a task</CardTitle>
     </CardHeader>
   );
 };

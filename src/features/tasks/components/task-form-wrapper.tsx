@@ -5,15 +5,21 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useGetMembers } from "@/features/members/api/use-get-members";
 import { Card, CardContent } from "@/components/ui/card";
 import { TaskForm } from "@/features/tasks/components/task-form";
+import { useGetTask } from "../api/use-get-task";
 
-interface CreateTaskFormWrapperProps {
+interface TaskFormWrapperProps {
   onCancel: () => void;
+  taskId?: string;
 }
 
-export const CreateTaskFormWrapper: React.FC<CreateTaskFormWrapperProps> = ({
+export const TaskFormWrapper: React.FC<TaskFormWrapperProps> = ({
   onCancel,
+  taskId,
 }) => {
   const workspaceId = useWorkspaceId();
+
+  const { data: task, isLoading: isLoadingTask } = useGetTask({ taskId });
+
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({
     workspaceId,
   });
@@ -32,7 +38,7 @@ export const CreateTaskFormWrapper: React.FC<CreateTaskFormWrapperProps> = ({
     name: member.name,
   }));
 
-  const isLoading = isLoadingProjects || isLoadingMembers;
+  const isLoading = isLoadingProjects || isLoadingMembers || isLoadingTask;
 
   if (isLoading) {
     return (
@@ -44,11 +50,16 @@ export const CreateTaskFormWrapper: React.FC<CreateTaskFormWrapperProps> = ({
     );
   }
 
+  if (taskId && !task) {
+    return null;
+  }
+
   return (
     <TaskForm
       projectOptions={projectOptions ?? []}
       memberOptions={memberOptions ?? []}
       onCancel={onCancel}
+      initialValues={task ?? undefined}
     />
   );
 };

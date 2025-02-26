@@ -47,8 +47,8 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   const updateQuery = useUpdateProject();
   const mutate = initialValues ? updateQuery.mutate : createQuery.mutate;
   const isPending = initialValues
-    ? updateQuery.isLoading
-    : createQuery.isLoading;
+    ? updateQuery.isPending
+    : createQuery.isPending;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(projectSchema.omit({ workspaceId: true })),
@@ -71,9 +71,9 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       {
         onSuccess: ({ data }) => {
           form.reset();
-          router.push(`/workspaces/${data.workspaceId}/projects/${data.$id}`)
+          router.push(`/workspaces/${data.workspaceId}/projects/${data.$id}`);
         },
-      },
+      }
     );
   };
 
@@ -219,7 +219,9 @@ const UpdateProjectHeader: React.FC<{ project: Project }> = ({ project }) => {
   return (
     <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
       <Button size="sm" variant="secondary" asChild>
-        <Link href={`/workspaces/${project.workspaceId}/projects/${project.$id}`}>
+        <Link
+          href={`/workspaces/${project.workspaceId}/projects/${project.$id}`}
+        >
           <ArrowLeftIcon className="size-4 mr-2" />
           Back
         </Link>
