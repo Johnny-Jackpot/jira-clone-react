@@ -11,6 +11,7 @@ import {
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { enUS } from "date-fns/locale";
 import { Task } from "../../types";
+import { EventCard } from "./event-card";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./index.css";
@@ -70,6 +71,17 @@ export const DataCalendar = ({ data }: DataCalendarProps) => {
       formats={{
         weekdayFormat: (date, culture, localizer) =>
           localizer?.format(date, "EEEE", culture) ?? "",
+      }}
+      components={{
+        eventWrapper: ({ event }) => (
+          <EventCard
+            id={event.id}
+            title={event.title}
+            assignee={event.assignee}
+            project={event.project}
+            status={event.status}
+          />
+        ),
       }}
     />
   );
