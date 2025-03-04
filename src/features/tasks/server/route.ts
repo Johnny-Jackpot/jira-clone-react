@@ -2,13 +2,14 @@ import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import { getTasksSchema, taskSchema } from "@/features/tasks/schemas";
 import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID } from "@/config";
 import { userBelongsToWorkspaceMiddleware } from "@/features/workspaces/server/guard-middleware";
 import { Project } from "@/features/projects/types";
 import { Member } from "@/features/members/types";
 import { createAdminClient } from "@/lib/appwrite";
-import { Task } from "../types";
+import { Task, TaskStatus } from "../types";
 import { getMember } from "@/features/members/utils";
 
 const app = new Hono()
@@ -247,6 +248,70 @@ const app = new Hono()
     await databases.deleteDocument(DATABASE_ID, TASKS_ID, taskId);
 
     return c.json({ data: { $id: task.$id } });
-  });
+  })
+  .post(
+    "/bulk-update",
+    sessionMiddleware,
+    zValidator(
+      "json",
+      z.object({
+        tasks: z.array(
+          z.object({
+            $id: z.string(),
+            status: z.nativeEnum(TaskStatus),
+            position: z.number().int().positive().min(1000).max(1_000_000),
+          })
+        ),
+      })
+    ),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { tasks } = c.req.valid("json");
 
+      const tasksToUpdate = await databases.listDocuments(
+        DATABASE_ID,
+        TASKS_ID,
+        [
+          Query.contains(
+            "$id",
+            tasks.map((task) => task.$id)
+          ),
+        ]
+      );
+
+      const workspaceIds = new Set(
+        tasksToUpdate.documents.map((task) => task.workspaceId)
+      );
+      if (workspaceIds.size > 1) {
+        return c.json(
+          { error: "All tasks must belong to the same workspace" },
+          403
+        );
+      }
+
+      const workspaceId = workspaceIds.values().next().value;
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+      if (!member) {
+        return c.json({ error: "Forbidden" }, 403);
+      }
+
+      const updatedTasks = await Promise.all(
+        tasks.map(async (task) => {
+          const { $id, status, position } = task;
+
+          return databases.updateDocument<Task>(DATABASE_ID, TASKS_ID, $id, {
+            status,
+            position,
+          });
+        })
+      );
+
+      return c.json({ data: updatedTasks });
+    }
+  );
 export default app;
