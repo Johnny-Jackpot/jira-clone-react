@@ -12,6 +12,8 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { enUS } from "date-fns/locale";
 import { Task } from "../../types";
 import { EventCard } from "./event-card";
+import { Toolbar } from "./toolbar";
+import { CalendarNavigateAction } from "./types";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./index.css";
@@ -47,12 +49,12 @@ export const DataCalendar = ({ data }: DataCalendarProps) => {
     status: task.status,
   }));
 
-  const handleNavigate = (action: "PREV" | "NEXT" | "TODAY") => {
+  const navigate = (action: CalendarNavigateAction) => {
     if (action === "PREV") {
       setValue(subMonths(value, 1));
     } else if (action === "NEXT") {
       setValue(addMonths(value, 1));
-    } else {
+    } else if (action === "TODAY") {
       setValue(new Date());
     }
   };
@@ -82,6 +84,7 @@ export const DataCalendar = ({ data }: DataCalendarProps) => {
             status={event.status}
           />
         ),
+        toolbar: () => <Toolbar date={value} navigate={navigate} />,
       }}
     />
   );
