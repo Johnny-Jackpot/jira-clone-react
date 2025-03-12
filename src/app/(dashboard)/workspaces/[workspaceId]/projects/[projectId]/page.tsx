@@ -36,7 +36,7 @@ const Page: React.FC = async ({ params }) => {
           </Button>
         </div>
       </div>
-      <TaskViewSwitcher />
+      <TaskViewSwitcher showProjectFilter={false} />
     </div>
   );
 };

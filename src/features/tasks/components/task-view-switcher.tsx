@@ -18,7 +18,13 @@ import { TaskUpdatesPayload } from "./data-kanban/types";
 import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
 import { DataCalendar } from "./data-calendar";
 
-export const TaskViewSwitcher: React.FC = () => {
+interface TaskViewSwitcherProps {
+  showProjectFilter?: boolean;
+}
+
+export const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
+  showProjectFilter = true,
+}) => {
   const [{ status, search, projectId, assigneeId, dueDate }] = useTaskFilters();
   const [view, setView] = useQueryState("task-view", {
     defaultValue: "table",
@@ -68,7 +74,7 @@ export const TaskViewSwitcher: React.FC = () => {
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        <DataFilters />
+        <DataFilters showProjectFilter={showProjectFilter} />
         <DottedSeparator className="my-4" />
         {isLoadingTasks ? (
           <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">
