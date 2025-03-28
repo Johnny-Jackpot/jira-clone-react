@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 type ProjectAvatarProps = {
   name: string;
-  image?: string;
+  image?: string | null;
   className?: string;
   fallbackClassName?: string;
 };
@@ -31,7 +31,7 @@ export const ProjectAvatar: React.FC<ProjectAvatarProps> = ({
       <AvatarFallback
         className={cn(
           "text-white bg-blue-600 font-medium text-sm uppercase rounded-md",
-          fallbackClassName,
+          fallbackClassName
         )}
       >
         {name[0]}
