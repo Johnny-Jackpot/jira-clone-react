@@ -1,5 +1,6 @@
 import { Query, type Databases } from "node-appwrite";
 import { DATABASE_ID, MEMBERS_ID } from "@/config";
+import { Member } from "./types";
 
 type GetMembersProps = {
   databases: Databases;
@@ -17,7 +18,11 @@ export const getMembers = async ({
     queries.push(Query.equal("userId", userId));
   }
 
-  return await databases.listDocuments(DATABASE_ID, MEMBERS_ID, queries);
+  return await databases.listDocuments<Member>(
+    DATABASE_ID,
+    MEMBERS_ID,
+    queries
+  );
 };
 
 export const getMember = async ({

@@ -14,6 +14,12 @@ import { projectSchema } from "@/features/projects/schemas";
 import { imagesUtils } from "@/features/storage/images/utils";
 import { Project } from "@/features/projects/types";
 import { userBelongsToWorkspaceMiddleware } from "@/features/workspaces/server/guard-middleware";
+import { getMember } from "@/features/members/utils";
+import {
+  AnalyticsData,
+  ProjectAnalyticsService,
+} from "../services/analytics/analyctics-service";
+import { TaskStatus } from "@/features/tasks/types";
 
 const app = new Hono()
   .get(
@@ -34,7 +40,7 @@ const app = new Hono()
       ]);
 
       return c.json({ data: projects });
-    },
+    }
   )
   .post(
     "/",
@@ -49,7 +55,7 @@ const app = new Hono()
 
       const { storedImage, imagePreview } = await imagesUtils.storeImage(
         storage,
-        image,
+        image
       );
 
       const project = await databases.createDocument<Project>(
@@ -61,11 +67,11 @@ const app = new Hono()
           workspaceId,
           imageId: storedImage?.$id,
           imagePreview,
-        },
+        }
       );
 
       return c.json({ data: project });
-    },
+    }
   )
   .patch(
     "/:projectId",
@@ -81,7 +87,7 @@ const app = new Hono()
 
       const { storedImage, imagePreview } = await imagesUtils.storeImage(
         storage,
-        image,
+        image
       );
 
       const project = await databases.updateDocument<Project>(
@@ -92,11 +98,11 @@ const app = new Hono()
           name,
           imageId: storedImage?.$id,
           imagePreview,
-        },
+        }
       );
 
       return c.json({ data: project });
-    },
+    }
   )
   .delete(
     "/:projectId",
@@ -119,7 +125,49 @@ const app = new Hono()
       await databases.deleteDocument(DATABASE_ID, PROJECTS_ID, projectId);
 
       return c.json({ data: { $id: projectId } });
-    },
+    }
+  )
+  .get(
+    "/:projectId/analytics",
+    sessionMiddleware,
+    projectMemberMiddleware,
+    async (c) => {
+      const user = c.get("user");
+      const databases: DatabasesType = c.get("databases");
+
+      const project = c.get("project");
+      const member = await getMember({
+        databases,
+        workspaceId: project.workspaceId,
+        userId: user.$id,
+      });
+
+      const filtersMap = {
+        tasks: [],
+        assignedTasks: [Query.equal("assigneeId", member.$id)],
+        incompleteTasks: [Query.notEqual("status", TaskStatus.DONE)],
+        completedTasks: [Query.equal("status", TaskStatus.DONE)],
+        overdueTasks: [
+          Query.notEqual("status", TaskStatus.DONE),
+          Query.lessThan("dueDate", new Date().toISOString()),
+        ],
+      };
+
+      const projectAnalyticsService = new ProjectAnalyticsService(databases);
+      const analytics: { [K in keyof typeof filtersMap]: AnalyticsData } =
+        await projectAnalyticsService.getAnalytics({
+          date: new Date(),
+          numOfMonthsBeforeDate: 1,
+          project,
+          filtersMap,
+        });
+
+      return c.json({
+        data: {
+          analytics,
+        },
+      });
+    }
   );
 
 export default app;

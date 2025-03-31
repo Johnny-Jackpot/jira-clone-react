@@ -1,16 +1,25 @@
 import { getProject } from "@/features/projects/queries";
 import { createMiddleware } from "hono/factory";
+import { Project } from "@/features/projects/types";
 
-export const projectMemberMiddleware = createMiddleware(async (c, next) => {
-  const { projectId } = c.req.param();
+type AdditionalContext = {
+  Variables: {
+    project: Project;
+  };
+};
 
-  const project = await getProject(projectId);
+export const projectMemberMiddleware = createMiddleware<AdditionalContext>(
+  async (c, next) => {
+    const { projectId } = c.req.param();
 
-  if (!project) {
-    return c.json({ error: "Forbidden" }, 403);
+    const project = await getProject(projectId);
+
+    if (!project) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+
+    c.set("project", project);
+
+    await next();
   }
-
-  c.set("project", project);
-
-  await next();
-});
+);
