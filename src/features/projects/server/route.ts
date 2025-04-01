@@ -154,13 +154,14 @@ const app = new Hono()
       };
 
       const projectAnalyticsService = new ProjectAnalyticsService(databases);
-      const analytics: { [K in keyof typeof filtersMap]: AnalyticsData } =
-        await projectAnalyticsService.getAnalytics({
-          date: new Date(),
-          numOfMonthsBeforeDate: 1,
-          project,
-          filtersMap,
-        });
+      const analytics = await projectAnalyticsService.getAnalytics<{
+        [K in keyof typeof filtersMap]: AnalyticsData;
+      }>({
+        date: new Date(),
+        numOfMonthsBeforeDate: 1,
+        project,
+        filtersMap,
+      });
 
       return c.json({
         data: {

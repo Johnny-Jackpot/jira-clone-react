@@ -8,10 +8,12 @@ export type AnalyticsData = {
   difference: number;
 };
 
+type Analytics = Record<string, AnalyticsData>;
+
 export class ProjectAnalyticsService {
   constructor(protected databases: DatabasesType) {}
 
-  async getAnalytics({
+  async getAnalytics<T extends Analytics>({
     project,
     date,
     numOfMonthsBeforeDate,
@@ -21,7 +23,7 @@ export class ProjectAnalyticsService {
     date: Date;
     numOfMonthsBeforeDate: number;
     filtersMap: Record<string, string[]>;
-  }) {
+  }): Promise<T> {
     const prevMonth = subMonths(date, numOfMonthsBeforeDate);
 
     const targetMonthStart = startOfMonth(date);
@@ -45,8 +47,19 @@ export class ProjectAnalyticsService {
     const allTasks = await Promise.all(promises);
 
     return allTasks
-      .map(this.calculateAnalytics)
-      .reduce(this.transformIntoObject.bind(this, filtersKeys), {});
+      .map(
+        ([tasks, prevTasks]): AnalyticsData => ({
+          count: tasks.total,
+          difference: tasks.total - prevTasks.total,
+        })
+      )
+      .reduce(
+        (analytics, currentNumbers, index) => ({
+          ...analytics,
+          [filtersKeys[index]]: currentNumbers,
+        }),
+        {} as T
+      );
   }
 
   protected fetchTargetAndPrevMonthTasks(
@@ -76,28 +89,5 @@ export class ProjectAnalyticsService {
 
   protected fetchTasks(filters: string[]) {
     return this.databases.listDocuments(DATABASE_ID, TASKS_ID, filters);
-  }
-
-  protected calculateAnalytics([
-    targetMonthTasks,
-    prevMonthTasks,
-  ]: Models.DocumentList<Models.Document>[]): AnalyticsData {
-    const count = targetMonthTasks.total;
-
-    return {
-      count,
-      difference: count - prevMonthTasks.total,
-    };
-  }
-  protected transformIntoObject(
-    filtersKeys: string[],
-    analytics,
-    currentNumbers: AnalyticsData,
-    index: number
-  ) {
-    const key = filtersKeys[index];
-    analytics[key] = currentNumbers;
-
-    return analytics;
   }
 }
