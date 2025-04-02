@@ -1,6 +1,5 @@
-import { Query, Databases as DatabasesType, Models } from "node-appwrite";
+import { Query, Databases as DatabasesType } from "node-appwrite";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
-import { Project } from "../../types";
 import { DATABASE_ID, TASKS_ID } from "@/config";
 
 export type AnalyticsData = {
@@ -14,15 +13,15 @@ export class ProjectAnalyticsService {
   constructor(protected databases: DatabasesType) {}
 
   async getAnalytics<T extends Analytics>({
-    project,
     date,
     numOfMonthsBeforeDate,
     filtersMap,
+    commonFilters = [],
   }: {
-    project: Project;
     date: Date;
     numOfMonthsBeforeDate: number;
     filtersMap: Record<string, string[]>;
+    commonFilters?: string[];
   }): Promise<T> {
     const prevMonth = subMonths(date, numOfMonthsBeforeDate);
 
@@ -39,8 +38,8 @@ export class ProjectAnalyticsService {
         targetMonthEnd,
         prevMonthStart,
         prevMonthEnd,
-        project,
-        filtersMap[key]
+        filtersMap[key],
+        commonFilters
       );
     });
 
@@ -67,10 +66,10 @@ export class ProjectAnalyticsService {
     targetMonthEnd: Date,
     prevMonthStart: Date,
     prevMonthEnd: Date,
-    project: Project,
-    filters: string[] = []
+    filters: string[] = [],
+    commonFilters: string[] = []
   ) {
-    const commonQueries = [Query.equal("projectId", project.$id), ...filters];
+    const commonQueries = [...filters, ...commonFilters];
 
     const targetMonthTasksPromise = this.fetchTasks([
       ...commonQueries,

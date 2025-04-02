@@ -159,8 +159,8 @@ const app = new Hono()
       }>({
         date: new Date(),
         numOfMonthsBeforeDate: 1,
-        project,
         filtersMap,
+        commonFilters: [Query.equal("projectId", project.$id)],
       });
 
       return c.json({
