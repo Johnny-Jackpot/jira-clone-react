@@ -3,7 +3,7 @@ import {
   ID,
   type Databases as DatabasesType,
   type Storage as StorageType,
-  Models,
+  Query,
 } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
@@ -19,8 +19,12 @@ import { Member, MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { workspacesUtils } from "@/features/workspaces/utils";
 import { imagesUtils } from "@/features/storage/images/utils";
-import { userIsWorkspaceAdminMiddleware } from "@/features/workspaces/server/guard-middleware";
+import {
+  userBelongsToWorkspaceMiddleware,
+  userIsWorkspaceAdminMiddleware,
+} from "@/features/workspaces/server/guard-middleware";
 import { getMember } from "@/features/members/utils";
+import { analycticsHandler } from "@/features/projects/services/analytics/analytics-handler";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -46,7 +50,7 @@ const app = new Hono()
 
       const { storedImage, imagePreview } = await imagesUtils.storeImage(
         storage,
-        image,
+        image
       );
 
       const workspace = await databases.createDocument(
@@ -59,7 +63,7 @@ const app = new Hono()
           imageId: storedImage?.$id,
           imagePreview,
           inviteCode: generateInviteCode(10),
-        },
+        }
       );
 
       await databases.createDocument(DATABASE_ID, MEMBERS_ID, ID.unique(), {
@@ -69,7 +73,7 @@ const app = new Hono()
       });
 
       return c.json({ data: workspace });
-    },
+    }
   )
   .patch(
     "/:workspaceId",
@@ -85,13 +89,13 @@ const app = new Hono()
 
       const workspace = await workspacesUtils.getWorkspace(
         workspaceId,
-        databases,
+        databases
       );
       const oldImageId = workspace?.imageId;
 
       const { storedImage, imagePreview } = await imagesUtils.storeImage(
         storage,
-        image,
+        image
       );
 
       const updatedWorkspace = await databases.updateDocument(
@@ -102,7 +106,7 @@ const app = new Hono()
           name,
           imageId: image ? storedImage?.$id : null,
           imagePreview: image ? imagePreview : null,
-        },
+        }
       );
 
       if ((storedImage || !image) && oldImageId) {
@@ -110,7 +114,7 @@ const app = new Hono()
       }
 
       return c.json({ data: updatedWorkspace });
-    },
+    }
   )
   .delete(
     ":workspaceId",
@@ -124,7 +128,7 @@ const app = new Hono()
 
       const workspace = await workspacesUtils.getWorkspace(
         workspaceId,
-        databases,
+        databases
       );
 
       if (!workspace) {
@@ -137,13 +141,13 @@ const app = new Hono()
 
       await databases.deleteDocument(DATABASE_ID, WORKSPACES_ID, workspaceId);
 
-      const member: Models.Document<Member> = c.get("member");
+      const member: Member = c.get("member");
       await databases.deleteDocument(DATABASE_ID, MEMBERS_ID, member.$id);
 
       //TODO: delete projects and tasks
 
       return c.json({ data: { $id: workspaceId } });
-    },
+    }
   )
   .post(
     ":workspaceId/reset-invite-code",
@@ -160,11 +164,11 @@ const app = new Hono()
         workspaceId,
         {
           inviteCode: generateInviteCode(10),
-        },
+        }
       );
 
       return c.json({ data: workspace });
-    },
+    }
   )
   .post(
     ":workspaceId/join",
@@ -189,7 +193,7 @@ const app = new Hono()
 
       const workspace = await workspacesUtils.getWorkspace(
         workspaceId,
-        databases,
+        databases
       );
       if (workspace.inviteCode !== code) {
         return c.json({ error: "Invalid invite code" }, 400);
@@ -202,7 +206,25 @@ const app = new Hono()
       });
 
       return c.json({ data: workspace });
-    },
+    }
+  )
+  .get(
+    "/:workspaceId/analytics",
+    sessionMiddleware,
+    userBelongsToWorkspaceMiddleware,
+    async (c) => {
+      const analytics = await analycticsHandler.handle(
+        c.get("databases"),
+        c.get("member"),
+        [Query.equal("workspaceId", c.req.param("workspaceId"))]
+      );
+
+      return c.json({
+        data: {
+          analytics,
+        },
+      });
+    }
   );
 
 export default app;

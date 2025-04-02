@@ -15,11 +15,7 @@ import { imagesUtils } from "@/features/storage/images/utils";
 import { Project } from "@/features/projects/types";
 import { userBelongsToWorkspaceMiddleware } from "@/features/workspaces/server/guard-middleware";
 import { getMember } from "@/features/members/utils";
-import {
-  AnalyticsData,
-  ProjectAnalyticsService,
-} from "../services/analytics/analyctics-service";
-import { TaskStatus } from "@/features/tasks/types";
+import { analycticsHandler } from "../services/analytics/analytics-handler";
 
 const app = new Hono()
   .get(
@@ -142,26 +138,11 @@ const app = new Hono()
         userId: user.$id,
       });
 
-      const filtersMap = {
-        tasks: [],
-        assignedTasks: [Query.equal("assigneeId", member.$id)],
-        incompleteTasks: [Query.notEqual("status", TaskStatus.DONE)],
-        completedTasks: [Query.equal("status", TaskStatus.DONE)],
-        overdueTasks: [
-          Query.notEqual("status", TaskStatus.DONE),
-          Query.lessThan("dueDate", new Date().toISOString()),
-        ],
-      };
-
-      const projectAnalyticsService = new ProjectAnalyticsService(databases);
-      const analytics = await projectAnalyticsService.getAnalytics<{
-        [K in keyof typeof filtersMap]: AnalyticsData;
-      }>({
-        date: new Date(),
-        numOfMonthsBeforeDate: 1,
-        filtersMap,
-        commonFilters: [Query.equal("projectId", project.$id)],
-      });
+      const analytics = await analycticsHandler.handle(
+        c.get("databases"),
+        member,
+        [Query.equal("projectId", project.$id)]
+      );
 
       return c.json({
         data: {
