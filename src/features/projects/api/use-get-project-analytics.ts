@@ -5,7 +5,7 @@ type UseGetProjectAnalyticsProps = {
   projectId: string;
 };
 
-export const UseGetProjectAnalytics = ({
+export const useGetProjectAnalytics = ({
   projectId,
 }: UseGetProjectAnalyticsProps) => {
   return useQuery({

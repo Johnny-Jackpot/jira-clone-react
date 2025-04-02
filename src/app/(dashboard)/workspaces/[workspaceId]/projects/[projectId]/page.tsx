@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PencilIcon } from "lucide-react";
 import Link from "next/link";
 import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
+import { Analytics } from "@/features/projects/components/analytics";
 
 const Page: React.FC = async ({ params }) => {
   await redirectToLoginIfNoUser();
@@ -36,6 +37,7 @@ const Page: React.FC = async ({ params }) => {
           </Button>
         </div>
       </div>
+      <Analytics projectId={project.$id} />
       <TaskViewSwitcher showProjectFilter={false} />
     </div>
   );
