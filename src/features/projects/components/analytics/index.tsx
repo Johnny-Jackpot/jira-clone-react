@@ -1,18 +1,25 @@
 "use client";
 
 import { PageLoader } from "@/components/page-loader";
-import { useGetProjectAnalytics } from "../api/use-get-project-analytics";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { AnalyticsCard } from "@/components/analytics-card";
 import { DottedSeparator } from "@/components/dotted-separator";
+import { AnalyticsData } from "../../services/analytics/analyctics-service";
+import { AnalyticsCard } from "./analytics-card";
 
 interface AnalyticsProps {
-  projectId: string;
+  data?: {
+    analytics: {
+      tasks: AnalyticsData;
+      assignedTasks: AnalyticsData;
+      incompleteTasks: AnalyticsData;
+      completedTasks: AnalyticsData;
+      overdueTasks: AnalyticsData;
+    };
+  };
+  isLoading: boolean;
 }
 
-export const Analytics = ({ projectId }: AnalyticsProps) => {
-  const { data, isLoading } = useGetProjectAnalytics({ projectId });
-
+export const Analytics = ({ data, isLoading }: AnalyticsProps) => {
   if (isLoading) {
     return <PageLoader />;
   }
