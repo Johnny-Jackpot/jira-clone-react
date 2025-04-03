@@ -17,6 +17,7 @@ import { DataKanban } from "./data-kanban";
 import { TaskUpdatesPayload } from "./data-kanban/types";
 import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
 import { DataCalendar } from "./data-calendar";
+import { useProjectId } from "@/features/projects/hooks/use-project-id";
 
 interface TaskViewSwitcherProps {
   showProjectFilter?: boolean;
@@ -31,11 +32,12 @@ export const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   });
 
   const workspaceId = useWorkspaceId();
+  const paramProjectId = useProjectId();
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
     status,
     search,
-    projectId,
+    projectId: projectId || paramProjectId,
     assigneeId,
     dueDate,
   });
