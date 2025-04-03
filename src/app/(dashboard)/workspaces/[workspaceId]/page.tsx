@@ -1,15 +1,11 @@
 import React from "react";
 import { redirectToLoginIfNoUser } from "@/features/auth/queries";
-import { WorkspaceAnalytics } from "@/features/workspaces/components/workspace-analytics";
+import { WorkspaceClient } from "./client";
 
 const Page: React.FC = async () => {
   await redirectToLoginIfNoUser();
 
-  return (
-    <div>
-      <WorkspaceAnalytics />
-    </div>
-  );
+  return <WorkspaceClient />;
 };
 
 export default Page;

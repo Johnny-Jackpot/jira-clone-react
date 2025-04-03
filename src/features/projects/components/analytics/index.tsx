@@ -16,10 +16,10 @@ interface AnalyticsProps {
       overdueTasks: AnalyticsData;
     };
   };
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
-export const Analytics = ({ data, isLoading }: AnalyticsProps) => {
+export const Analytics = ({ data, isLoading = false }: AnalyticsProps) => {
   if (isLoading) {
     return <PageLoader />;
   }
