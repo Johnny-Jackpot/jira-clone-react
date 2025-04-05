@@ -13,7 +13,7 @@ export const useLogout = () => {
 
   return useMutation<ResponseType, Error>({
     mutationFn: async () => {
-      const response = await client.api.auth.logout["$post"]();
+      const response = await client.api.auth.logout["$post"](null);
       if (!response.ok) {
         throw new Error("Failed to log out");
       }
