@@ -9,7 +9,7 @@ export const getCurrentUser = async () => {
     const { account } = await createSessionClient();
 
     return await account.get();
-  } catch (e) {
+  } catch {
     return null;
   }
 };

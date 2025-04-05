@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(inter.variable, "antialiased min-h-screen ")}>
+      <body className={cn(inter.className, "antialiased min-h-screen ")}>
         <QueryProvider>
           <NuqsAdapter>
             <Toaster />

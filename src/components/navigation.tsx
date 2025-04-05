@@ -47,7 +47,7 @@ export const Navigation: React.FC = () => {
   return (
     <ul className="flex flex-col">
       {routes.map((item) => {
-        const fullHref = item.getHref ? item.getHref(workspaceId) : item.href;
+        const fullHref = item.getHref(workspaceId);
         const isActive = fullHref === pathname;
         const Icon = isActive ? item.activeIcon : item.icon;
 

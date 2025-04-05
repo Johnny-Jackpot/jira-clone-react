@@ -18,7 +18,13 @@ import { useCreateWorkspaceModal } from "@/features/workspaces/hooks/use-create-
 export const WorkspaceSwitcher: React.FC = () => {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
-  const { data: workspaces } = useGetWorkspaces();
+  const {
+    data: workspaces,
+  }: {
+    data?: {
+      documents: { $id: string; name: string; imagePreview?: string }[];
+    };
+  } = useGetWorkspaces();
   const { open } = useCreateWorkspaceModal();
 
   const onValueChanged = (id: string) => {

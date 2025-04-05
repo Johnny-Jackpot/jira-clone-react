@@ -19,7 +19,7 @@ import { Task } from "@/features/tasks/types";
 import { useGetWorkspaceAnalytics } from "@/features/workspaces/api/use-get-workspace-analytics";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { CalendarIcon, PlusIcon } from "@radix-ui/react-icons";
-import { formatDate, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { SettingsIcon } from "lucide-react";
 import Link from "next/link";
 

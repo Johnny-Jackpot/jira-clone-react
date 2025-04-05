@@ -17,7 +17,7 @@ export const useOnDragEnd = (
       const sourceStatus = source.droppableId as TaskStatus;
       const destStatus = destination.droppableId as TaskStatus;
 
-      let updatesPayload: TaskUpdatesPayload[] = [];
+      const updatesPayload: TaskUpdatesPayload[] = [];
 
       const getNewPosition = (index: number) =>
         Math.min((index + 1) * 1000, 1_000_000);
@@ -82,7 +82,7 @@ export const useOnDragEnd = (
 
       onChange(updatesPayload);
     },
-    [onChange]
+    [onChange, setTasks]
   );
 
   return { onDragEnd };

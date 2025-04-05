@@ -5,13 +5,15 @@ import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { cn } from "@/lib/utils";
 import { TaskStatus } from "../../types";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { Project } from "@/features/projects/types";
+import { Member } from "@/features/members/types";
 
 interface EventCardProps {
   id: string;
   title: string;
   status: TaskStatus;
-  project: Record<string, any> | undefined;
-  assignee: Record<string, any> | undefined;
+  project: Project | undefined;
+  assignee: (Member & { name: string; email: string }) | undefined;
 }
 
 const statusColorMap: Record<TaskStatus, string> = {
@@ -51,7 +53,7 @@ export const EventCard = ({
           <MemberAvatar name={assignee?.name} />
           <div className="size-1 rounded-full bg-neutral-300"></div>
           <ProjectAvatar
-            name={project?.name}
+            name={project?.name || ""}
             image={project?.imagePreview}
             fallbackClassName="text-[10px]"
           />

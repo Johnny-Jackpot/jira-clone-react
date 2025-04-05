@@ -39,7 +39,7 @@ export const DataFilters: React.FC<DataFiltersProps> = ({
     value: member.$id,
   }));
 
-  const [{ status, search, projectId, assigneeId, dueDate }, setFilters] =
+  const [{ status, projectId, assigneeId, dueDate }, setFilters] =
     useTaskFilters();
 
   const onStatusChange = (value: string) => {

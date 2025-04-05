@@ -5,7 +5,7 @@ import { KanbanColumnHeader } from "../kanban-column-header";
 import { KanbanCard } from "../kanban-card";
 import { useTasksState } from "./use-tasks-state";
 import { useOnDragEnd } from "./use-on-drag-end";
-import { onKanbanChange, type TaskUpdatesPayload } from "./types";
+import { onKanbanChange } from "./types";
 
 const boards: TaskStatus[] = [
   TaskStatus.BACKLOG,

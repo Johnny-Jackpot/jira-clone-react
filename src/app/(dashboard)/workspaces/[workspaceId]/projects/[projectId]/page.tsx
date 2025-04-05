@@ -8,7 +8,7 @@ import Link from "next/link";
 import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
 import { ProjectAnalytics } from "@/features/projects/components/project-analytics";
 
-const Page: React.FC = async ({ params }) => {
+const Page = async ({ params }: { params: Promise<{ projectId: string }> }) => {
   await redirectToLoginIfNoUser();
   const { projectId } = await params;
   const project = await getProject(projectId);

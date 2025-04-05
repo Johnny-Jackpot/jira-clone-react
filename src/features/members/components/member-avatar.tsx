@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -18,13 +17,13 @@ export const MemberAvatar: React.FC<MemberAvatarProps> = ({
     <Avatar
       className={cn(
         "size-5 transition border border-neutral-300 rounded-full",
-        className,
+        className
       )}
     >
       <AvatarFallback
         className={cn(
           "bg-neutral-200 font-medium text-neutral-500 flex items-center justify-center uppercase",
-          fallbackClassName,
+          fallbackClassName
         )}
       >
         {name[0]}

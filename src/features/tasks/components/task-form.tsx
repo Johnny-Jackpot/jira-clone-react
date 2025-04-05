@@ -6,7 +6,6 @@ import { z } from "zod";
 import Link from "next/link";
 import { ArrowLeftIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
@@ -52,7 +51,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   onCancel,
 }) => {
   const workspaceId = useWorkspaceId();
-  const router = useRouter();
 
   const createMutation = useCreateTask();
   const updateMutation = useUpdateTask();
@@ -78,7 +76,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         json: { ...values, workspaceId },
       },
       {
-        onSuccess: ({ data }) => {
+        onSuccess: () => {
           form.reset();
           onCancel?.();
         },
@@ -93,7 +91,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         param: { taskId: (initialValues as Task).$id },
       },
       {
-        onSuccess: ({ data }) => {
+        onSuccess: () => {
           form.reset();
           onCancel?.();
         },
